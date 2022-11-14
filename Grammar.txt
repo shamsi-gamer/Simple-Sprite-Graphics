@@ -1,0 +1,337 @@
+﻿1. Lexicon
+
+Input:
+     InputBodyᵒᵖᵗ
+
+InputBody:
+     InputPart   InputBodyᵒᵖᵗ
+
+InputPart:
+     NewLine
+     InputElements   NewLineᵒᵖᵗ
+
+InputElements:
+     InputElement   InputElementsᵒᵖᵗ
+
+InputElement:
+     NewLine
+     WhiteSpace
+     Comment
+     Token
+
+
+1.1 Line terminators
+
+NewLine:
+     Carriage return (U+000D) followed by line feed (U+000A)
+     NewLineCharacter
+
+NewLineCharacter:
+     Carriage return (U+000D)
+     Line feed (U+000A)
+     Next line (U+2085)
+     Line separator (U+2028)
+     Paragraph separator (U+2029)
+
+
+1.2 White space
+
+WhiteSpace:
+     WhiteSpaceCharacter   Whitespaceᵒᵖᵗ
+
+WhiteSpaceCharacter:
+     Any Unicode character of class Zs
+     Horizontal tab (U+0009)
+     Vertical tab (U+000B)
+     Form feed (U+000C)
+
+
+1.3 Comments
+
+Comment:
+     SingleLineComment
+     DelimitedComment
+
+SingleLineComment:
+     //   SingleLineCommentStringᵒᵖᵗ
+
+SingleLineCommentString:
+     SingleLineCommentCharacter   SingleLineCommentStringᵒᵖᵗ
+
+SingleLineCommentCharacter:
+     Any Unicode character except a NewLineCharacter
+
+DelimitedComment:
+     /*   DelimitedCommentStringᵒᵖᵗ   */
+
+DelimitedCommentString:
+     DelimitedCommentCharacter   DelimitedCommentStringᵒᵖᵗ
+
+DelimitedCommentCharacter:
+     Any Unicode character
+
+
+1.4 Escape sequences
+
+EscapeSequence:
+     SimpleEscapeSequence
+     HexEscapeSequence
+     UnicodeEscapeSequence
+
+SimpleEscapeSequence:
+one of
+     \'   \"   \\   \0   \a   \b   \f   \n   \r   \t   \v
+
+HexEscapeSequence:
+     \x   HexDigit   HexDigitᵒᵖᵗ   HexDigitᵒᵖᵗ   HexDigitᵒᵖᵗ
+
+UnicodeEscapeSequence:
+     \u   HexDigit   HexDigit   HexDigit   HexDigit
+     \U   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit
+
+
+1.5 Tokens
+
+Token:
+     Identifier
+     Keyword
+     Literal
+     Punctuator
+
+
+1.6 Identifiers
+
+Identifier:
+     IdentifierStartCharacter   IdentifierStringᵒᵖᵗ
+
+IdentifierStartCharacter:
+     LetterCharacter
+     _
+
+IdentifierString:
+     IdentifierCharacter   IdentifierStringᵒᵖᵗ
+
+IdentifierCharacter:
+     LetterCharacter
+     DigitCharacter
+     ConnectingCharacter
+     CombiningCharacter
+     FormattingCharacter
+
+LetterCharacter:
+     Any Unicode character of class Lu, Ll, Lt, Lm, Lo or Nl
+     A UnicodeEscapeSequence of any character of class Lu, Ll, Lt, Lm, Lo or Nl
+
+DigitCharacter:
+     Any Unicode character of class Nd
+     A UnicodeEscapeSequence of any character of class Nd
+
+ConnectingCharacter:
+     Any Unicode character of class Pc
+     A UnicodeEscapeSequence of any character of class Pc
+
+CombiningCharacter:
+     Any Unicode character of class Mn or Mc
+     A UnicodeEscapeSequence of any character of class Mn or Mc
+
+FormattingCharacter:
+     Any Unicode character of class Cf
+     A UnicodeEscapeSequence of any character of class Cf
+
+
+1.7 Keywords
+
+Keyword:
+one of
+     DSP SP LW
+     FR FE FC
+     DL DT DS
+
+
+1.8 Literals
+
+Literal:
+    ColorLiteral
+    PercentLiteral
+    NumberLiteral
+    StringLiteral
+
+ColorLiteral:
+     #   HexDigit   
+     #   HexDigit   HexDigit   
+     #   HexDigit   HexDigit   HexDigit   
+     #   HexDigit   HexDigit   HexDigit   HexDigit0113
+     #   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   
+     #   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit   HexDigit
+
+PercentLiteral:
+    NumberLiteral   %
+
+NumberLiteral:
+    IntegerLiteral
+    RealLiteral
+
+IntegerLiteral:
+    DecimalLiteral
+    HexLiteral
+
+DecimalLiteral:
+    DecimalDigits
+
+DecimalDigits:
+    DecimalDigit
+    DecimalDigits   DecimalDigitsᵒᵖᵗ
+    DecimalDigits   _   DecimalDigitsᵒᵖᵗ
+
+DecimalDigit:
+     Any Unicode character of class Nd
+
+HexLiteral:
+     0x   HexDigits
+     0X   HexDigits
+
+HexDigits:
+     HexDigit   HexDigitsᵒᵖᵗ
+
+HexDigit:
+     DecimalDigit
+one of
+     A   B   C   D   E   F
+     a   b   c   d   e   f
+
+RealLiteral:
+     DecimalDigitsᵒᵖᵗ   .   DecimalDigits   RealExponentᵒᵖᵗ
+     DecimalDigits   .   DecimalDigitsᵒᵖᵗ   RealExponentᵒᵖᵗ
+     DecimalDigits   RealExponent
+
+RealExponent:
+     e   Signᵒᵖᵗ   DecimalDigits
+     E   Signᵒᵖᵗ   DecimalDigits
+
+Sign:
+one of
+     +   -
+
+StringLiteral:
+     "   StringCharactersᵒᵖᵗ   "
+
+StringCharacters:
+     StringCharacter   StringCharactersᵒᵖᵗ
+
+StringCharacter:
+     SingleStringCharacter
+     EscapeSequence
+
+SingleStringCharacter:
+     Any character except ", \ and NewLineCharacter
+
+
+1.9 Punctuators
+
+Punctuator:
+one of
+     {   }   (   )   .   
+     +   -   *   /   %
+
+
+2. Syntax
+
+
+2.1 Expressions
+
+Expression:
+    AdditiveExpression
+    MultiplicativeExpression
+    UnaryExpression
+    PrimaryExpression
+    ParenthesizedExpression
+    
+AdditiveExpression:
+     MultiplicativeExpression
+     MultiplicativeExpression   +   AdditiveExpression
+     MultiplicativeExpression   —   AdditiveExpression
+
+MutiplicativeExpression:
+     UnaryExpression
+     UnaryExpression   *   MultiplicativeExpression
+     UnaryExpression   /   MultiplicativeExpression
+     UnaryExpression   %   MultiplicativeExpression
+
+UnaryExpression:
+     PrimaryExpression
+     +   UnaryExpression
+     —   UnaryExpression
+
+PrimaryExpression:
+     Literal
+     Identifier
+     ParenthesizedExpression
+
+ParenthesizedExpression:
+     (   ExpressionList   )
+
+ExpressionList:
+     Expression
+     ExpressionList   ,   Expression
+
+
+2.3 Statements
+
+
+StatementList:
+    Statementsᵒᵖᵗ
+
+Statements:
+    BasicStatement   Statementsᵒᵖᵗ
+
+BasicStatement:
+     Block
+
+Block:
+     {   StatementListᵒᵖᵗ   }
+
+StatementList:
+     Statement
+     StatementList   Statement
+
+Statement:
+    SelectDisplaysStatement
+    SetSpaceStatement
+    FillRectangleStatement
+    FillSquareStatement
+    FillEllipseStatement
+    FillCircleStatement
+    SetLineWidthStatement
+    DrawLineStatement
+    DrawTextureStatement
+    DrawStringStatement
+
+SelectDisplaysStatement:
+    DSP
+
+SetSpaceStatement:
+    SP   Expression   Expression   Expression   Expression
+
+FillRectangleStatement:
+    FR   Expression   Expression   Expression   Expression
+
+FillSquareStatement:
+    FS   Expression   Expression   Expression
+
+FillEllipseStatement:
+    FE   Expression   Expression   Expression   Expression
+
+FillCircleStatement:
+    FC   Expression   Expression   Expression   Expression
+
+SetLineWidthStatement:
+    LW   Expression   Expression   Expression   Expression
+
+DrawLineStatement:
+    DL   Expression   Expression   Expression   Expression
+
+DrawTextureStatement:
+    DT   Expression   Expression   Expression   Expression
+
+DrawStringStatement:
+    DS   Expression   Expression   Expression   Expression

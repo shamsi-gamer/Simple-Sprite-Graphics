@@ -115,6 +115,7 @@ namespace IngameScript
                     switch (parse.Next.ToLower())
                     {
                         case "dsp": if (!ParseDisplays   (parse)) return false; break;
+                        case "sp":  if (!ParseSpace      (parse)) return false; break;
                         
                         case "fr":  if (!ParseFillRect   (parse)) return false; break;
 
@@ -159,6 +160,22 @@ namespace IngameScript
                 parse.Displays[0].ContentWidth,
                 parse.Displays[0].ContentHeight);
 
+
+            return true;
+        }
+
+
+
+        public bool ParseSpace(Parse parse)
+        {
+            parse.Move(); // DSP
+
+            var x = ParseCoordX(parse);
+            var y = ParseCoordY(parse);
+            var w = ParseCoordW(parse);
+            var h = ParseCoordH(parse);
+
+            parse.Space = new RectangleF(x, y, w, h);
 
             return true;
         }
@@ -240,8 +257,8 @@ namespace IngameScript
 
             var x = ParseCoordX(parse);
             var y = ParseCoordY(parse);
-            var w = ParseCoordX(parse);
-            var h = ParseCoordY(parse);
+            var w = ParseCoordW(parse);
+            var h = ParseCoordH(parse);
 
             FillRect(parse.Displays[0].Sprites, x, y, w, h, parse.Color);
 
@@ -256,8 +273,8 @@ namespace IngameScript
 
             var x  = ParseCoordX(parse);
             var y  = ParseCoordY(parse);
-            var rx = ParseCoordX(parse);
-            var ry = ParseCoordY(parse);
+            var rx = ParseCoordW(parse);
+            var ry = ParseCoordH(parse);
 
             FillEllipse(parse.Displays[0].Sprites, x, y, rx, ry, parse.Color);
 
@@ -271,10 +288,10 @@ namespace IngameScript
 
             var x  = ParseCoordX(parse);
             var y  = ParseCoordY(parse);
-            var r  = ParseCoordX(parse);
+            var r  = ParseCoordH(parse);
 
             var rx = r;
-            var ry = r * parse.Displays[0].ContentHeight / parse.Displays[0].ContentWidth;
+            var ry = r;
 
             FillEllipse(parse.Displays[0].Sprites, x, y, rx, ry, parse.Color);
 
