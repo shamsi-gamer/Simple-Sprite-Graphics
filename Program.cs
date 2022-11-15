@@ -93,12 +93,13 @@ namespace IngameScript
 
     partial class Program : MyGridProgram
     {
-        //Display display;
+        Parser parser;
 
         public Program()
         {
-            //display = new Display(GetLcd("Sci-Fi LCD Panel 5x3"));
             Runtime.UpdateFrequency = UpdateFrequency.Update10;
+
+            parser = new Parser(Me.CustomData);
         }
     }
 }

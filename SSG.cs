@@ -24,141 +24,61 @@ namespace IngameScript
 {
     partial class Program
     {
-        public struct Coord 
-        { 
-            public float Value; 
-            public bool  Percent;
+        public string[] ScanTokens(string str)
+        {
+            str = str.Replace("\t", " ");
+            str = str.Replace("\\\"", "\uFFFC");
 
-            public Coord(float val, bool percent)
+
+            var split = new List<string>();
+
+
+            var quoteParts = str.Split('\"');
+
+            for (var i = 0; i < quoteParts.Length; i += 2)
             {
-                Value   = val;
-                Percent = percent;
+                quoteParts[i] = quoteParts[i].Replace("\n", " "); // new lines are white space only outside of quotes
+
+                var parts = quoteParts[i].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var part in parts)
+                    split.Add(part);
+
+                if (i < quoteParts.Length - 1)
+                    split.Add(quoteParts[i+1].Replace("\uFFFC", "\""));
             }
+
+
+            return split.ToArray();
         }
 
 
 
-        public class Parse
+        public bool ParseSetDisplay(Parser parser)
         {
-            public string[]      Tokens;
-            public int           Pos;
-
-            public List<Display> Displays;
-
-            public RectangleF    Space;
-
-            public Color         Color;
-            public float         LineWidth;
+            parser.Move(); // DSP
 
 
-            public string Next { get { return Tokens[Pos]; } }
+            var panels = new List<IMyTextPanel>();
+            GridTerminalSystem.GetBlocksOfType(panels);
+
+            panels = panels
+                .OrderBy(b => b.Position.X)
+                .OrderBy(b => b.Position.Y)
+                .ToList();
 
 
-
-            public Parse(string[] tokens)
-            {
-                Tokens    = tokens;
-                Pos       = 0;
-                          
-                Displays  = new List<Display>();
-
-                Space     = new RectangleF();
-
-                Color     = Color.White;
-                LineWidth = 1;
-            }
-
-
-
-            public string Move()
-            {
-                if (Pos < Tokens.Length)
-                    return Tokens[Pos++];
-
-                else
-                {
-                    Pos++;
-                    return "";
-                }
-            }
-
-
-
-            public void Flush()
-            {
-                foreach (var display in Displays)
-                    display.Flush();
-            }
-        }
-
-
-
-        public bool ParseCSG(string csg)
-        {
-            var tokens = SplitWithQuotes(csg);
- 
-            var parse = new Parse(tokens);
-            //parse.Displays.Add(display);
-
-
-            var overflowProtect = 10;
-
-
-            while (parse.Pos < parse.Tokens.Length
-                && overflowProtect > 0)
-            { 
-                if (parse.Next[0] == '#')
-                    parse.Color = ColorFromHex(parse.Move());
-                
-                else
-                { 
-                    switch (parse.Next.ToLower())
-                    {
-                        case "dsp": if (!ParseDisplays   (parse)) return false; break;
-                        case "sp":  if (!ParseSpace      (parse)) return false; break;
-                        
-                        case "fr":  if (!ParseFillRect   (parse)) return false; break;
-
-                        case "fe":  if (!ParseFillEllipse(parse)) return false; break;
-                        case "fc":  if (!ParseFillCircle (parse)) return false; break;
-
-                        case "lw":  if (!ParseLineWidth  (parse)) return false; break;
-                        case "dl":  if (!ParseDrawLine   (parse)) return false; break;
-
-                        case "dt":  if (!ParseDrawTexture(parse)) return false; break;
-                            
-                        case "ds":  if (!ParseDrawString (parse)) return false; break;
-
-                        default: overflowProtect--; break;
-                    }
-                }
-            }
-
-
-            parse.Flush(); // last dump
-
-
-            return true;
-        }
-
-
-
-        public bool ParseDisplays(Parse parse)
-        {
-            parse.Move(); // DSP
-
-
-            var dspName  = parse.Move();
+            var dspName  = parser.Move();
             var dspBlock = GetLcd(dspName);
 
-            parse.Displays.Add(new Display(dspBlock));
+            parser.CurrentScope.Displays.Add(new Display(dspBlock));
 
 
-            parse.Space = new RectangleF(
+            parser.CurrentScope.Area = new RectangleF(
                 0,
                 0,
-                parse.Displays[0].ContentWidth,
-                parse.Displays[0].ContentHeight);
+                parser.Displays[0].ContentWidth,
+                parser.Displays[0].ContentHeight);
 
 
             return true;
@@ -166,23 +86,27 @@ namespace IngameScript
 
 
 
-        public bool ParseSpace(Parse parse)
+        public bool ParseSetArea(Parser parser)
         {
-            parse.Move(); // DSP
+            parser.Move(); // DSP
 
-            var x = ParseCoordX(parse);
-            var y = ParseCoordY(parse);
-            var w = ParseCoordW(parse);
-            var h = ParseCoordH(parse);
+            var x = (XCoord)ParseCoord(parser);
+            var y = (YCoord)ParseCoord(parser);
+            var w = (WCoord)ParseCoord(parser);
+            var h = (HCoord)ParseCoord(parser);
 
-            parse.Space = new RectangleF(x, y, w, h);
+            parser.Space = new RectangleF(
+                x.GetAbsoluteValue(parser), 
+                y.GetAbsoluteValue(parser), 
+                w.GetAbsoluteValue(parser), 
+                h.GetAbsoluteValue(parser));
 
             return true;
         }
 
 
 
-        public Coord ParseCoord(Parse parse)
+        public Coord ParseCoord(Parser parse)
         {
             var str = parse.Move();
 
@@ -203,142 +127,119 @@ namespace IngameScript
 
 
 
-        public float ParseCoordX(Parse parse)
-        {
-            var coord = ParseCoord(parse);
+        //public bool ParseFillRect(Parser parse)
+        //{
+        //    parse.Move(); // FR
 
-            if (coord.Percent)
-                coord.Value = parse.Space.X + coord.Value/100 * parse.Space.Width;
+        //    var x = (XCoord)ParseCoord(parse);
+        //    var y = (YCoord)ParseCoord(parse);
+        //    var w = (WCoord)ParseCoord(parse);
+        //    var h = (HCoord)ParseCoord(parse);
 
-            return coord.Value;
-        }
+        //    FillRect(
+        //        parse.Displays[0].Sprites, 
+        //        x.GetAbsoluteValue(parse), 
+        //        y.GetAbsoluteValue(parse), 
+        //        w.GetAbsoluteValue(parse),
+        //        h.GetAbsoluteValue(parse), 
+        //        parse.Color);
 
-
-
-        public float ParseCoordW(Parse parse)
-        {
-            var coord = ParseCoord(parse);
-
-            if (coord.Percent)
-                coord.Value = coord.Value/100 * parse.Space.Width;
-
-            return coord.Value;
-        }
+        //    return true;
+        //}
 
 
 
-        public float ParseCoordY(Parse parse)
-        {
-            var coord = ParseCoord(parse);
+        //public bool ParseFillEllipse(Parser parse)
+        //{
+        //    parse.Move(); // FE
 
-            if (coord.Percent)
-                coord.Value = parse.Space.Y + coord.Value/100 * parse.Space.Height;
+        //    var x  = (XCoord)ParseCoord(parse);
+        //    var y  = (YCoord)ParseCoord(parse);
+        //    var rx = (WCoord)ParseCoord(parse);
+        //    var ry = (HCoord)ParseCoord(parse);
 
-            return coord.Value;
-        }
+        //    FillEllipse(
+        //        parse.Displays[0].Sprites, 
+        //        x .GetAbsoluteValue(parse), 
+        //        y .GetAbsoluteValue(parse), 
+        //        rx.GetAbsoluteValue(parse),
+        //        ry.GetAbsoluteValue(parse), 
+        //        parse.Color);
 
-
-
-        public float ParseCoordH(Parse parse)
-        {
-            var coord = ParseCoord(parse);
-
-            if (coord.Percent)
-                coord.Value = coord.Value/100 * parse.Space.Height;
-
-            return coord.Value;
-        }
+        //    return true;
+        //}
 
 
+        //public bool ParseFillCircle(Parser parse)
+        //{
+        //    parse.Move(); // FE
 
-        public bool ParseFillRect(Parse parse)
-        {
-            parse.Move(); // FR
+        //    var x  = (XCoord)ParseCoord(parse);
+        //    var y  = (YCoord)ParseCoord(parse);
+        //    var ry = (HCoord)ParseCoord(parse);
+        //    var rx = ry;
 
-            var x = ParseCoordX(parse);
-            var y = ParseCoordY(parse);
-            var w = ParseCoordW(parse);
-            var h = ParseCoordH(parse);
+        //    FillEllipse(
+        //        parse.Displays[0].Sprites, 
+        //        x .GetAbsoluteValue(parse), 
+        //        y .GetAbsoluteValue(parse), 
+        //        rx.GetAbsoluteValue(parse),
+        //        ry.GetAbsoluteValue(parse), 
+        //        parse.Color);
 
-            FillRect(parse.Displays[0].Sprites, x, y, w, h, parse.Color);
-
-            return true;
-        }
-
-
-
-        public bool ParseFillEllipse(Parse parse)
-        {
-            parse.Move(); // FE
-
-            var x  = ParseCoordX(parse);
-            var y  = ParseCoordY(parse);
-            var rx = ParseCoordW(parse);
-            var ry = ParseCoordH(parse);
-
-            FillEllipse(parse.Displays[0].Sprites, x, y, rx, ry, parse.Color);
-
-            return true;
-        }
-
-
-        public bool ParseFillCircle(Parse parse)
-        {
-            parse.Move(); // FE
-
-            var x  = ParseCoordX(parse);
-            var y  = ParseCoordY(parse);
-            var r  = ParseCoordH(parse);
-
-            var rx = r;
-            var ry = r;
-
-            FillEllipse(parse.Displays[0].Sprites, x, y, rx, ry, parse.Color);
-
-            return true;
-        }
+        //    return true;
+        //}
 
 
 
-        public bool ParseLineWidth(Parse parse)
-        {
-            parse.Move(); // LW #
+        //public bool ParseLineWidth(Parse parse)
+        //{
+        //    parse.Move(); // LW #
 
-            var lw = float.Parse(parse.Move());
+        //    var lw = float.Parse(parse.Move());
 
-            parse.LineWidth = lw;
+        //    parse.LineWidth = lw;
 
-            return true;
-        }
-
-
-
-        public bool ParseDrawLine(Parse parse)
-        {
-            parse.Move(); // DL
-
-            var x1 = ParseCoordX(parse);
-            var y1 = ParseCoordY(parse);
-            var x2 = ParseCoordX(parse);
-            var y2 = ParseCoordY(parse);
-
-            DrawLine(parse.Displays[0].Sprites, x1, y1, x2, y2, parse.Color, parse.LineWidth);
-
-            return true;
-        }
+        //    return true;
+        //}
 
 
 
-        public bool ParseDrawTexture(Parse parse)
+        //public bool ParseDrawLine(Parse parse)
+        //{
+        //    parse.Move(); // DL
+
+        //    var x1 = ParseCoordX(parse);
+        //    var y1 = ParseCoordY(parse);
+        //    var x2 = ParseCoordX(parse);
+        //    var y2 = ParseCoordY(parse);
+
+        //    DrawLine(parse.Displays[0].Sprites, x1, y1, x2, y2, parse.Color, parse.LineWidth);
+
+        //    return true;
+        //}
+
+
+
+        public bool ParseDrawTexture(Parser parse)
         {
             parse.Move(); // DT
 
             var tex = parse.Move();
 
-            var x = ParseCoordX(parse);
-            var y = ParseCoordY(parse);
-            var w = ParseCoordX(parse);
-            var h = ParseCoordY(parse);
+            var x = (XCoord)ParseCoord(parse);
+            var y = (YCoord)ParseCoord(parse);
+            var w = (WCoord)ParseCoord(parse);
+            var h = (HCoord)ParseCoord(parse);
+
+            DrawTexture(
+                parse.Displays[0].Sprites, 
+                tex,
+                x.GetAbsoluteValue(parse), 
+                y.GetAbsoluteValue(parse), 
+                w.GetAbsoluteValue(parse),
+                h.GetAbsoluteValue(parse), 
+                parse.Color);
 
             var r = float.Parse(parse.Move());
 
@@ -349,35 +250,35 @@ namespace IngameScript
 
 
 
-        public bool ParseDrawString(Parse parse)
-        {
-            parse.Move(); // DS
+        //public bool ParseDrawString(Parse parse)
+        //{
+        //    parse.Move(); // DS
 
-            var str = parse.Move();
+        //    var str = parse.Move();
 
-            var x     = ParseCoordX(parse);
-            var y     = ParseCoordY(parse);
-            var scale = float.Parse(parse.Move());
-            var align = ParseStringAlign(parse.Move());
+        //    var x     = ParseCoordX(parse);
+        //    var y     = ParseCoordY(parse);
+        //    var scale = float.Parse(parse.Move());
+        //    var align = ParseStringAlign(parse.Move());
 
-            DrawString(parse.Displays[0].Sprites, str, x, y, scale, parse.Color, align);
+        //    DrawString(parse.Displays[0].Sprites, str, x, y, scale, parse.Color, align);
 
-            return true;
-        }
+        //    return true;
+        //}
 
 
 
-        public TextAlignment ParseStringAlign(string str)
-        {
-            switch (str)
-            {
-                case "L": return TextAlignment.LEFT;
-                case "C": return TextAlignment.CENTER;
-                case "R": return TextAlignment.RIGHT;
-                // default: // error
-            }
+        //public TextAlignment ParseStringAlign(string str)
+        //{
+        //    switch (str)
+        //    {
+        //        case "L": return TextAlignment.LEFT;
+        //        case "C": return TextAlignment.CENTER;
+        //        case "R": return TextAlignment.RIGHT;
+        //        // default: // error
+        //    }
 
-            return TextAlignment.LEFT;
-        }
+        //    return TextAlignment.LEFT;
+        //}
     }
 }

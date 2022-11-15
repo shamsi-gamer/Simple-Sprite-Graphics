@@ -62,36 +62,11 @@ namespace IngameScript
 
 
 
-        void             Get<T>(List<T> blocks)                          where T : class { GridTerminalSystem.GetBlocksOfType(blocks);            }
+        void             Get<T>(List<T> blocks) where T : class { GridTerminalSystem.GetBlocksOfType(blocks);            }
         //void             Get<T>(List<T> blocks, Func<T, bool> condition) where T : class { GridTerminalSystem.GetBlocksOfType(blocks, condition); }
 
         IMyTerminalBlock Get   (string s) { return GridTerminalSystem.GetBlockWithName(s); }
         IMyTextPanel     GetLcd(string s) { return Get(s) as IMyTextPanel; }
-
-
-        string[] SplitWithQuotes(string str)
-        {
-            var split = new List<string>();
-
-
-            var quoteParts = str.Split('\"');
-
-            for (var i = 0; i < quoteParts.Length; i += 2)
-            {
-                quoteParts[i] = quoteParts[i].Replace("\n", " "); // new lines are white space only outside of quotes
-
-                var parts = quoteParts[i].Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
-
-                foreach (var part in parts)
-                    split.Add(part);
-
-                if (i < quoteParts.Length-1)
-                    split.Add(quoteParts[i+1]);
-            }
-
-
-            return split.ToArray();
-        }
 
 
 

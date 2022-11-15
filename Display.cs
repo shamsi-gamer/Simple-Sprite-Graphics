@@ -15,13 +15,22 @@ namespace IngameScript
             public IMyTextSurface         Surface;
 
             public RectangleF             Viewport;
-                                          
-            public float                  Scale,
-                                          
-                                          ContentWidth,
+            public Vector2                Offset; // this will be changed externally
+
+            public float                  ContentWidth,
                                           ContentHeight;
 
-            public List<MySprite>         Sprites;
+
+
+            public RectangleF OffsetViewport 
+            {
+                get 
+                { 
+                    var viewport = Viewport;
+                    viewport.Position -= Offset;
+                    return viewport;
+                } 
+            }
 
 
 
@@ -51,17 +60,13 @@ namespace IngameScript
             void Init()
             {
                 Surface.ContentType = ContentType.SCRIPT;
-
-                Scale             = 1;
-                                  
-                Surface.Script    = "";
-
-                Viewport          = new RectangleF((Surface.TextureSize - Surface.SurfaceSize) / 2, Surface.SurfaceSize);
-                                  
-                ContentWidth      = Viewport.Width;
-                ContentHeight     = Viewport.Height;
-
-                Sprites           = new List<MySprite>();
+                Surface.Script      = "";
+                                    
+                Viewport            = new RectangleF((Surface.TextureSize - Surface.SurfaceSize) / 2, Surface.SurfaceSize);
+                Offset              = new Vector2(0, 0);
+                                    
+                ContentWidth        = Viewport.Width;
+                ContentHeight       = Viewport.Height;
             }
 
 
@@ -75,33 +80,6 @@ namespace IngameScript
                         * Math.Min(Surface.SurfaceSize.X, Surface.SurfaceSize.Y)
                         / Math.Min(Surface.TextureSize.Y, Surface.TextureSize.Y);
                 }
-            }
-
-
-
-            public float UserScale
-            {
-                get
-                {
-                    if (Scale == 0)
-                    {
-                        return
-                            Surface.SurfaceSize.X / ContentWidth < Surface.SurfaceSize.Y / ContentHeight
-                            ? (Surface.SurfaceSize.X - 10) / ContentWidth
-                            : (Surface.SurfaceSize.Y - 10) / ContentHeight;
-                    }
-                    else return Scale;
-                }
-            }
-
-
-
-            public void Flush()
-            {
-                if (Sprites.Count > 0)
-                    Draw(Sprites);
-
-                Sprites = new List<MySprite>();
             }
 
 
@@ -125,15 +103,11 @@ namespace IngameScript
 
             public void Draw(ref MySpriteDrawFrame frame, MySprite sprite)
             {
-                     if (sprite.Type == SpriteType.TEXT   ) sprite.RotationOrScale *= UserScale;
-                else if (sprite.Type == SpriteType.TEXTURE) sprite.Size            *= UserScale;
-
-                sprite.Position *= UserScale;
-
                 sprite.Position +=
                       Viewport.Position
+                    - Offset
                     + Viewport.Size / 2
-                    - new Vector2(ContentWidth, ContentHeight) / 2 * UserScale;
+                    - new Vector2(ContentWidth, ContentHeight) / 2;
                 
                 frame.Add(sprite);
             }

@@ -18,24 +18,15 @@ using VRage.Game.ModAPI.Ingame.Utilities;
 using VRage.Game.ObjectBuilders.Definitions;
 using VRageMath;
 
-
-
 namespace IngameScript
-{ 
-    partial class Program : MyGridProgram
+{
+    partial class Program
     {
-        public void Main(string arg, UpdateType update)
-        {
-            //ProcessArg(arg);
+        public readonly string[] Keywords = new string[]
+        { 
+            SetDisplayCommand .Keyword,
 
-            if ((update & UpdateType.Update10) != 0) Update10();
-        }
-
-
-
-        public void Update10()
-        {
-            parser.EvalCommands();
-        }
+            DrawTextureCommand.Keyword
+        };
     }
 }
