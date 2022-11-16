@@ -66,11 +66,11 @@ namespace IngameScript
         //void             Get<T>(List<T> blocks, Func<T, bool> condition) where T : class { GridTerminalSystem.GetBlocksOfType(blocks, condition); }
 
         IMyTerminalBlock Get   (string s) { return GridTerminalSystem.GetBlockWithName(s); }
-        IMyTextPanel     GetLcd(string s) { return Get(s) as IMyTextPanel; }
+        //IMyTextPanel     GetLcd(string s) { return Get(s) as IMyTextPanel; }
 
 
 
-        Color ColorFromHex(string hex)
+        static Color ColorFromHex(string hex)
         {
             if (hex.Length == 0)
                 return new Color();

@@ -30,62 +30,26 @@ namespace IngameScript
             public List<Scope>   Scopes;
             public Scope         CurrentScope;
 
-            public string        Next { get { return Tokens[Pos]; } }
+            public bool          HasNext       { get { return Pos+1 < Tokens.Length; } }
+            public bool          NextIsKeyword { get { return Keywords.Contains(Next); } }
+
+            public string        Next          { get { return Tokens[Pos]; } }
                                                 
             public List<Command> Commands;
 
 
 
-            public Parser(string ssg)
+            public Parser(string[] tokens)
             {
-                Tokens    = new string[] { };
-                Pos       = 0;
-
-                Scopes    = new List<Scope>();
+                Tokens       = tokens;
+                Pos          = 0;
+                             
+                Scopes       = new List<Scope>();
                 Scopes.Add(new Scope());
 
                 CurrentScope = Scopes[0];
 
-                Commands = new List<Command>();
-
-
-            var tokens = ScanTokens(ssg);
-            var parse  = new Parser();
-
-
-            var overflowProtect = 10;
-
-            while (parse.Pos < parse.Tokens.Length
-                && overflowProtect > 0)
-            { 
-                if (parse.Next[0] == '#')
-                    parse.Color = ColorFromHex(parse.Move());
-                
-                else
-                { 
-                    switch (parse.Next.ToLower())
-                    {
-                        case "dsp": if (!ParseDisplays   (parse)) return false; break;
-                        //case "sp":  if (!ParseSpace      (parse)) return false; break;
-                        
-                        case "dt":  if (!ParseDrawTexture(parse)) return false; break;
-                            
-                        //case "fr":  if (!ParseFillRect   (parse)) return false; break;
-
-                        //case "fe":  if (!ParseFillEllipse(parse)) return false; break;
-                        //case "fc":  if (!ParseFillCircle (parse)) return false; break;
-
-                        //case "lw":  if (!ParseLineWidth  (parse)) return false; break;
-                        //case "dl":  if (!ParseDrawLine   (parse)) return false; break;
-
-                        //case "ds":  if (!ParseDrawString (parse)) return false; break;
-
-                        default: overflowProtect--; break;
-                    }
-                }
-            }
-
-
+                Commands     = new List<Command>();
             }
 
 
@@ -109,6 +73,97 @@ namespace IngameScript
                 foreach (var cmd in Commands)
                     cmd.Eval(this);
             }
+        }
+
+
+
+        public Parser Scan(string ssg)
+        {
+            ssg = ssg.Replace("\\\"", "\uFFFC"); // guard escaped quotes
+
+
+            var tokens = new List<string>();
+
+
+            var qparts = ssg.Split('\"');
+
+            for (var i = 0; i < qparts.Length; i += 2)
+            {
+                qparts[i] = qparts[i]
+                    .Replace("\n", " ")  // new lines and tabs
+                    .Replace("\t", " "); // are white space only outside of quotes
+
+                var sparts = qparts[i].Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var part in sparts)
+                    tokens.Add(part);
+
+                if (i < qparts.Length - 1)                           // string literal after first quote
+                    tokens.Add(qparts[i+1].Replace("\uFFFC", "\"")); // restore escaped quotes
+            }
+
+
+            return new Parser(tokens.ToArray());
+        }
+
+
+
+        public bool Parse(Parser parser)
+        {
+            var overflowProtect = 10;
+
+
+            while (   parser.Pos < parser.Tokens.Length
+                   && overflowProtect > 0)
+            {
+                if (parser.Next[0] == '#')
+                    parser.CurrentScope.Color = ColorFromHex(parser.Move());
+
+                else
+                {
+                    switch (parser.Next.ToUpper())
+                    {
+                        case SetDisplay .Keyword: if (!ParseSetDisplay (parser)) return false; break;
+                        //case "sp":  if (!ParseSpace      (parse)) return false; break;
+
+                        case DrawTexture.Keyword: if (!ParseDrawTexture(parser)) return false; break;
+
+                        //case "fr":  if (!ParseFillRect   (parse)) return false; break;
+
+                        //case "fe":  if (!ParseFillEllipse(parse)) return false; break;
+                        //case "fc":  if (!ParseFillCircle (parse)) return false; break;
+
+                        //case "lw":  if (!ParseLineWidth  (parse)) return false; break;
+                        //case "dl":  if (!ParseDrawLine   (parse)) return false; break;
+
+                        //case "ds":  if (!ParseDrawString (parse)) return false; break;
+
+                        default: overflowProtect--; break;
+                    }
+                }
+            }
+
+
+            return true;
+        }
+
+
+
+        public Coord ParseCoord(Parser parser)
+        {
+            var token   = parser.Move();
+            var percent = false;
+
+            if (   token.Length > 0
+                && token[token.Length-1] == '%')
+            {
+                percent = true;
+                token   = token.Substring(0, token.Length-1);
+            }
+
+            var val = float.Parse(token);
+
+            return new Coord(val, percent);
         }
     }
 }

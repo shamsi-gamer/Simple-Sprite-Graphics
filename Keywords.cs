@@ -22,11 +22,11 @@ namespace IngameScript
 {
     partial class Program
     {
-        public readonly string[] Keywords = new string[]
+        public static readonly string[] Keywords = new string[]
         { 
-            SetDisplayCommand .Keyword,
+            SetDisplay .Keyword,
 
-            DrawTextureCommand.Keyword
+            DrawTexture.Keyword
         };
     }
 }

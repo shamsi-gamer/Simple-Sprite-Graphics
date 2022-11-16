@@ -25,8 +25,10 @@ namespace IngameScript
     // SSG - Simple Sprite Graphics
     
 
-    // remove tabs from ssg
+
+    // only group panels
     
+
 
     // AREA x y w h
     // COMP ...
@@ -95,11 +97,12 @@ namespace IngameScript
     {
         Parser parser;
 
+
         public Program()
         {
-            Runtime.UpdateFrequency = UpdateFrequency.Update10;
-
             parser = new Parser(Me.CustomData);
+
+            Runtime.UpdateFrequency = UpdateFrequency.Update10;
         }
     }
 }

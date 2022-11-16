@@ -38,15 +38,16 @@
   <Import Project="MDK/MDK.options.props" />
   <Import Project="MDK/MDK.paths.props" Condition="exists('MDK/MDK.paths.props')" />
   <ItemGroup>
-    <Compile Include="Commands.cs" />
+    <Compile Include="Commands\Command.cs" />
+    <Compile Include="Commands\DrawTexture.cs" />
     <Compile Include="Coords.cs" />
     <Compile Include="Keywords.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Scope.cs" />
+    <Compile Include="Commands\SetDisplay.cs" />
     <Compile Include="SpriteList.cs" />
     <Compile Include="SSG.cs" />
     <Compile Include="Display.cs" />
-    <Compile Include="Drawing.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="MDK\Bootstrapper.cs" />
     <AdditionalFiles Include="MDK\MDK.options.props">

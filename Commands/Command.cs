@@ -44,58 +44,6 @@ namespace IngameScript
         }
 
 
-
-        public class SetDisplayCommand : Command
-        {
-            public static string Keyword = "DSP";
-
-            public Display[] Displays;
-
-            public SetDisplayCommand(Display[] displays)
-            {
-                Displays = new List<Display>(displays).ToArray();
-            }
-
-            public override void Eval(Parser parser) 
-            {
-                var scope = parser.CurrentScope;
-            }
-        }
-
-
-
-        public class DrawTextureCommand : DrawCommand
-        { 
-            public static string Keyword = "DT";
-
-            public WCoord        Width;
-            public HCoord        Height;
-            public SpriteTexture Texture;
-
-            public DrawTextureCommand(XCoord x, YCoord y, WCoord width, HCoord height, SpriteTexture tex) : base(x, y)
-            {
-                Width   = new WCoord(width);
-                Height  = new HCoord(height);
-                Texture = tex;
-            }
-
-            public override void Eval(Parser parser) 
-            {
-                var scope = parser.CurrentScope;
-
-                //DrawTexture(
-                //    scope.Displays[0].Sprites, 
-                //    Texture.Name, 
-                //    X     .GetAbsoluteValue(parser), 
-                //    Y     .GetAbsoluteValue(parser), 
-                //    Width .GetAbsoluteValue(parser),
-                //    Height.GetAbsoluteValue(parser), 
-                //    scope.Color);
-            }
-        }
-
-
-
         //public class FillRectangle : Command
         //{ 
         //    public WCoord Width;
