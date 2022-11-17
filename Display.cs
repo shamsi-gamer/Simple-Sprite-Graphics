@@ -22,6 +22,8 @@ namespace IngameScript
             public float                  ContentWidth,
                                           ContentHeight;
 
+            public List<MySprite>         Sprites;
+
 
 
             public RectangleF OffsetViewport 
@@ -73,6 +75,8 @@ namespace IngameScript
                                     
                 ContentWidth        = Viewport.Width;
                 ContentHeight       = Viewport.Height;
+
+                Sprites             = new List<MySprite>();
             }
 
 
@@ -207,6 +211,14 @@ namespace IngameScript
                     - new Vector2(ContentWidth, ContentHeight) / 2;
                 
                 frame.Add(sprite);
+            }
+
+
+
+            public void FlushSprites()
+            {
+                Draw(Sprites);
+                Sprites = new List<MySprite>();
             }
         }
     }

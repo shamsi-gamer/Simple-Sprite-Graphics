@@ -24,22 +24,22 @@ namespace IngameScript
     {
         public class DrawTexture : DrawCommand
         { 
-            public const string  Keyword = "DT";
+            public const string  Keyword = "tex";
 
+
+            public SpriteTexture Texture;
 
             public WCoord        Width;
             public HCoord        Height;
 
-            public SpriteTexture Texture;
 
 
-
-            public DrawTexture(XCoord x, YCoord y, WCoord width, HCoord height, SpriteTexture tex) : base(x, y)
+            public DrawTexture(SpriteTexture tex, XCoord x, YCoord y, WCoord width, HCoord height) : base(x, y)
             {
+                Texture = tex;
+
                 Width   = new WCoord(width);
                 Height  = new HCoord(height);
-                
-                Texture = tex;
             }
 
 
@@ -48,44 +48,41 @@ namespace IngameScript
             {
                 var scope = parser.CurrentScope;
 
-                //DrawTexture(
-                //    scope.Displays[0].Sprites, 
-                //    Texture.Name, 
-                //    X     .GetAbsoluteValue(parser), 
-                //    Y     .GetAbsoluteValue(parser), 
-                //    Width .GetAbsoluteValue(parser),
-                //    Height.GetAbsoluteValue(parser), 
-                //    scope.Color);
+                scope.Displays[0].DrawTexture(
+                    scope.Displays[0].Sprites, 
+                    Texture.ID, 
+                    X     .GetAbsoluteValue(scope), 
+                    Y     .GetAbsoluteValue(scope), 
+                    Width .GetAbsoluteValue(scope),
+                    Height.GetAbsoluteValue(scope), 
+                    scope.Color);
+
+                logPanel.WriteText("DrawTexture.Eval()\n", true);
             }
         }
 
 
 
-        public static bool ParseDrawTexture(Parser parser)
+        // TEX TextureName X Y W H
+
+        public bool ParseDrawTexture(Parser parser)
         {
-            parser.Move(); // keyword
+            if (!parser.Match(DrawTexture.Keyword))
+                return false;
 
-            //var tex = parse.Move();
+            var tag = parser.Move();
+            var tex = SpriteTexture.From(tag);
 
-            //var x = (XCoord)ParseCoord(parse);
-            //var y = (YCoord)ParseCoord(parse);
-            //var w = (WCoord)ParseCoord(parse);
-            //var h = (HCoord)ParseCoord(parse);
+            var x   = (XCoord)ParseCoord(parser);
+            var y   = (YCoord)ParseCoord(parser);
+            var w   = (WCoord)ParseCoord(parser);
+            var h   = (HCoord)ParseCoord(parser);
 
-            //DrawTexture(
-            //    parse.Displays[0].Sprites, 
-            //    tex,
-            //    x.GetAbsoluteValue(parse), 
-            //    y.GetAbsoluteValue(parse), 
-            //    w.GetAbsoluteValue(parse),
-            //    h.GetAbsoluteValue(parse), 
-            //    parse.Color);
 
-            //var r = float.Parse(parse.Move());
+            parser.AddCommand(new DrawTexture(tex, x, y, w, h));
 
-            //DrawTexture(parse.Displays[0].Sprites, tex, x, y, w, r, parse.Color, r);
 
-            return true;
+            return false;
         }
     }
 }

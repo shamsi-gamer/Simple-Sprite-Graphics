@@ -28,5 +28,12 @@ namespace IngameScript
 
             DrawTexture.Keyword
         };
+
+
+ 
+        public static readonly string[] Punctuation = new string[]
+        { 
+            "(", ")"
+        };
     }
 }

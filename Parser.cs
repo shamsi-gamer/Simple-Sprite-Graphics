@@ -30,10 +30,15 @@ namespace IngameScript
             public List<Scope>   Scopes;
             public Scope         CurrentScope;
 
-            public bool          HasNext       { get { return Pos+1 < Tokens.Length; } }
-            public bool          NextIsKeyword { get { return Keywords.Contains(Next); } }
+            public bool          HasNext           { get { return Pos+1 < Tokens.Length;   } }
 
-            public string        Next          { get { return Tokens[Pos]; } }
+            public bool          NextIsPunctuation { get { return Punctuation.Contains(Next); } }
+            public bool          NextIsKeyword     { get { return Keywords   .Contains(Next); } }
+
+            public bool          NextIsReserved    { get { return NextIsPunctuation
+                                                               || NextIsKeyword; } }
+
+            public string        Next              { get { return Tokens[Pos]; } }
                                                 
             public List<Command> Commands;
 
@@ -68,6 +73,32 @@ namespace IngameScript
 
 
 
+            public bool Match(string token)
+            {
+                if (   HasNext
+                    && Next == token)
+                { 
+                    Move();
+                    return true;
+                }
+
+                return false;
+            }
+
+
+
+            public bool AddCommand(Command cmd)
+            {
+                if (cmd == null)
+                    return false;
+
+                Commands.Add(cmd);
+
+                return true;
+            }
+
+
+
             public void EvalCommands()
             {
                 foreach (var cmd in Commands)
@@ -77,7 +108,7 @@ namespace IngameScript
 
 
 
-        public Parser Scan(string ssg)
+        public List<string> Scan(string ssg)
         {
             ssg = ssg.Replace("\\\"", "\uFFFC"); // guard escaped quotes
 
@@ -103,15 +134,17 @@ namespace IngameScript
             }
 
 
-            return new Parser(tokens.ToArray());
+            return tokens;
         }
 
 
 
-        public bool Parse(Parser parser)
+        public Parser Parse(List<string> tokens)
         {
-            var overflowProtect = 10;
+            var parser = new Parser(tokens.ToArray());
 
+
+            var overflowProtect = 10;
 
             while (   parser.Pos < parser.Tokens.Length
                    && overflowProtect > 0)
@@ -121,12 +154,13 @@ namespace IngameScript
 
                 else
                 {
-                    switch (parser.Next.ToUpper())
+                    logPanel.WriteText("next = " + parser.Next + "\n", true);
+                    switch (parser.Next.ToLower())
                     {
-                        case SetDisplay .Keyword: if (!ParseSetDisplay (parser)) return false; break;
+                        case SetDisplay .Keyword: ParseSetDisplay(parser); break;
                         //case "sp":  if (!ParseSpace      (parse)) return false; break;
 
-                        case DrawTexture.Keyword: if (!ParseDrawTexture(parser)) return false; break;
+                        case DrawTexture.Keyword: ParseDrawTexture(parser); break;
 
                         //case "fr":  if (!ParseFillRect   (parse)) return false; break;
 
@@ -144,7 +178,7 @@ namespace IngameScript
             }
 
 
-            return true;
+            return parser;
         }
 
 

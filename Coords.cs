@@ -28,7 +28,7 @@ namespace IngameScript
             public bool  Percent;
 
 
-            public Coord(float val, bool percent)
+            public Coord(float val, bool percent = false)
             {
                 Value   = val;
                 Percent = percent;
@@ -52,7 +52,7 @@ namespace IngameScript
 
         public class WCoord : Coord
         {
-            public WCoord(float val, bool percent) : base(val, percent) { }
+            public WCoord(float val, bool percent = false) : base(val, percent) { }
             public WCoord(WCoord coord) : base(coord) { }
 
             public override float GetAbsoluteValue(Scope scope) 
@@ -65,7 +65,7 @@ namespace IngameScript
 
         public class HCoord : Coord
         {
-            public HCoord(float val, bool percent) : base(val, percent) { }
+            public HCoord(float val, bool percent = false) : base(val, percent) { }
             public HCoord(HCoord coord) : base(coord) { }
 
             public override float GetAbsoluteValue(Scope scope) 
@@ -78,7 +78,7 @@ namespace IngameScript
 
         public class XCoord : WCoord
         {
-            public XCoord(float val, bool percent) : base(val, percent) { }
+            public XCoord(float val, bool percent = false) : base(val, percent) { }
             public XCoord(XCoord coord) : base(coord) { }
 
             public override float GetAbsoluteValue(Scope scope) 
@@ -91,7 +91,7 @@ namespace IngameScript
 
         public class YCoord : HCoord
         {
-            public YCoord(float val, bool percent) : base(val, percent) { }
+            public YCoord(float val, bool percent = false) : base(val, percent) { }
             public YCoord(YCoord coord) : base(coord) { }
 
             public override float GetAbsoluteValue(Scope scope) 

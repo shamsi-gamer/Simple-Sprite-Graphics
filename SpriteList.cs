@@ -22,28 +22,35 @@ namespace IngameScript
 {
     partial class Program
     {
-        public struct SpriteTexture
+        public class SpriteTexture
         {
-            public string Code;
-            public string Name;
+            public string Tag;
+            public string ID;
             public float  Width;
             public float  Height;
 
-            public SpriteTexture(string code, string name, float width, float height)
+
+            public SpriteTexture(string tag, string id, float width, float height)
             {
-                Code   = code;
-                Name   = name;
+                Tag    = tag;
+                ID     = id;
                 Width  = width;
                 Height = height;
+            }
+
+
+            public static SpriteTexture From(string tag)
+            {
+                return Array.Find(SpriteTextures, t => t.Tag == tag.ToUpper());
             }
         }
 
 
-        public static readonly SpriteTexture[] Textures = 
+        public static readonly SpriteTexture[] SpriteTextures = 
         {
-            new SpriteTexture("HBS",   "AH_BoreSight",	                                                      64,   64),
+            new SpriteTexture("HBS",   "AH_BoreSight",	                                                     64,   64),
             new SpriteTexture("HGN",   "AH_GravityHudNegativeDegrees",                                      300,   31),
-            new SpriteTexture("HGP",   "AH_GravityHudPositiveDegrees",	                                     300,   31),
+            new SpriteTexture("HGP",   "AH_GravityHudPositiveDegrees",	                                    300,   31),
             new SpriteTexture("HPU",   "AH_PullUp",                                                         100,  100),
             new SpriteTexture("HTB",   "AH_TextBox",                                                         80,   31),
             new SpriteTexture("HVV",   "AH_VelocityVector",                                                  51,   51),
@@ -249,7 +256,7 @@ namespace IngameScript
             new SpriteTexture("SLB2",  "Screen_LoadingBar2",                                                256,  256),
             new SpriteTexture("SCR",   "SemiCircle",                                                        512,  512),
             new SpriteTexture("SQH",   "SquareHollow",                                                      512,  512),
-            new SpriteTexture("SQS",   "SquareSimple",                                                        4,    4),
+            new SpriteTexture("SQR",   "SquareSimple",                                                        4,    4),
             new SpriteTexture("SQT",   "SquareTapered",                                                      32,   32),
             new SpriteTexture("STB2",  "StoreBlock2",                                                      1024, 1024),
 

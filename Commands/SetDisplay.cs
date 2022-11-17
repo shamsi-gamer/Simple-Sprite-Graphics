@@ -24,16 +24,28 @@ namespace IngameScript
     {
         public class SetDisplay : Command
         {
-            public const string Keyword = "DSP";
+            public const string  Keyword = "dsp";
 
 
-            public Display[]    Displays;
+            public List<Display> Displays;
+
+            public int           AxisX;
+            public int           AxisY;
+
+            public int           MaxX;
+            public int           MaxY;
 
 
 
-            public SetDisplay(Display[] displays)
+            public SetDisplay(List<Display> displays, int ax, int ay, int maxX, int maxY)
             {
-                Displays = new List<Display>(displays).ToArray();
+                Displays = displays;
+
+                AxisX    = ax;
+                AxisY    = ay;
+
+                MaxX     = maxX;
+                MaxY     = maxY;
             }
 
 
@@ -41,74 +53,118 @@ namespace IngameScript
             public override void Eval(Parser parser) 
             {
                 var scope = parser.CurrentScope;
+
+
+                scope.Displays.ForEach(d => d.FlushSprites());
+
+
+                scope.Displays = Displays;
+
+                var dspBR = Displays.Find(d =>
+                       d.Panel.Max[AxisX] == MaxX
+                    && d.Panel.Max[AxisY] == MaxY);
+
+                scope.Area = new CRectangle(
+                    new XCoord(0),
+                    new YCoord(0),
+                    new WCoord(dspBR.Offset.X + dspBR.Surface.TextureSize.X),
+                    new HCoord(dspBR.Offset.Y + dspBR.Surface.TextureSize.Y));
             }
         }
 
 
 
+        // DSP PanelName
+        // DSP ( PanelName1 PanelName2 ... )
+
         public bool ParseSetDisplay(Parser parser)
         {
-            parser.Move(); // keyword
+            if (!parser.Match(SetDisplay.Keyword)) 
+                return false;
 
 
             var displays = new List<Display>();
 
 
-            while (    parser.HasNext
-                   && !parser.NextIsKeyword)
+            if (parser.Match("("))
             {
-                var name  = parser.Move();
-                var panel = Get(name) as IMyTextPanel;
+                while (    parser.HasNext
+                       && !parser.NextIsReserved)
+                    ParseDisplay(displays, parser);
 
-                if (panel != null)
-                    displays.Add(new Display(panel));
+                parser.Match(")");
+            }
+            else
+            {
+                ParseDisplay(displays, parser);
             }
 
+
+            var ax  = -1;
+            var ay  = -1;
+
+            var min = new Vector3I(int.MaxValue, int.MaxValue, int.MaxValue);
+            var max = new Vector3I(int.MinValue, int.MinValue, int.MinValue);
 
 
             if (displays.Count > 0)
             { 
-                float minX = float.MaxValue, maxX = float.MinValue;
-                float minY = float.MaxValue, maxY = float.MinValue;
-                float minZ = float.MaxValue, maxZ = float.MinValue;
-
-                foreach (var d in displays)
+                foreach (var dsp in displays)
                 {
-                    minX = Math.Min(minX, d.Panel.Position.X);
-                    minY = Math.Min(minY, d.Panel.Position.Y);
-                    minZ = Math.Min(minZ, d.Panel.Position.Z);
-
-                    maxX = Math.Max(maxX, d.Panel.Position.X);
-                    maxY = Math.Max(maxY, d.Panel.Position.Y);
-                    maxZ = Math.Max(maxZ, d.Panel.Position.Z);
+                    for (int i = 0; i < 3; i++)
+                    { 
+                        min[i] = Math.Min(min[i], dsp.Panel.Min[i]);
+                        max[i] = Math.Max(max[i], dsp.Panel.Max[i]);
+                    }
                 }
 
-                var dx = Math.Abs(maxX - minX);
-                var dy = Math.Abs(maxY - minY);
-                var dz = Math.Abs(maxZ - minZ);
+
+                var dx = Math.Abs(max.X - min.X) + 1;
+                var dy = Math.Abs(max.Y - min.Y) + 1;
+                var dz = Math.Abs(max.Z - min.Z) + 1;
 
 
-                //parser.CurrentScope.Area = new RectangleF(
-                //    0,
-                //    0,
-                //    parser.Displays[0].ContentWidth,
-                //    parser.Displays[0].ContentHeight);
+                foreach (var dsp in displays)
+                { 
+                         if (dx >= dy && dy >= dz) { ax = 0; ay = 1; }
+                    else if (dx >= dz && dz >= dy) { ax = 0; ay = 2; }
+                    else if (dy >= dx && dx >= dz) { ax = 1; ay = 0; }
+                    else if (dy >= dz && dz >= dx) { ax = 1; ay = 2; }
+                    else if (dz >= dx && dx >= dy) { ax = 2; ay = 0; }
+                    else if (dz >= dy && dy >= dx) { ax = 2; ay = 1; }
+                }
 
-                //panels = panels
-                //    .OrderBy(b => b.Position.X)
-                //    .OrderBy(b => b.Position.Y)
-                //    .ToList();
+
+                displays = displays
+                    .OrderBy(d => d.Panel.Position[ax])
+                    .OrderBy(d => d.Panel.Position[ay])
+                    .ToList();
+
+                foreach (var dsp in displays)
+                { 
+                    var pos = dsp.Panel.Position;
+
+                    dsp.Offset[ax] = (pos[ax] - min[ax]) * dsp.Surface.TextureSize.X; // TODO judging by its own size for now 
+                    dsp.Offset[ay] = (pos[ay] - min[ay]) * dsp.Surface.TextureSize.Y;
+                }
             }
-            else
-            {
-
-            }
 
 
+            parser.AddCommand(new SetDisplay(displays, ax, ay, max[ax], max[ay]));
 
-            parser.CurrentScope.Displays = displays;
 
             return true;
+        }
+
+
+
+        public void ParseDisplay(List<Display> displays, Parser parser)
+        {
+            var name  = parser.Move();
+            var panel = Get(name) as IMyTextPanel;
+
+            if (panel != null)
+                displays.Add(new Display(panel));
         }
     }
 }

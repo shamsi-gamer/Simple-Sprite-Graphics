@@ -28,7 +28,7 @@ namespace IngameScript
 
     // only group panels
     
-
+    // VAR define variables that can be referenced and updated from the outside through arguments
 
     // AREA x y w h
     // COMP ...
@@ -95,12 +95,19 @@ namespace IngameScript
 
     partial class Program : MyGridProgram
     {
+        public static IMyTextPanel logPanel;
+
         Parser parser;
 
 
         public Program()
         {
-            parser = new Parser(Me.CustomData);
+            logPanel = Get("Log Panel") as IMyTextPanel;
+            logPanel.ContentType = ContentType.TEXT_AND_IMAGE;
+            logPanel.WriteText("");
+
+            var tokens = Scan(Me.CustomData);
+                parser = Parse(tokens);
 
             Runtime.UpdateFrequency = UpdateFrequency.Update10;
         }
