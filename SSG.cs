@@ -28,10 +28,10 @@ namespace IngameScript
         //{
         //    parser.Move(); // DSP
 
-        //    var x = (XCoord)ParseCoord(parser);
-        //    var y = (YCoord)ParseCoord(parser);
-        //    var w = (WCoord)ParseCoord(parser);
-        //    var h = (HCoord)ParseCoord(parser);
+        //    var x = (XCoord)ParseXCoord(parser);
+        //    var y = (YCoord)ParseYCoord(parser);
+        //    var w = (WCoord)ParseWCoord(parser);
+        //    var h = (HCoord)ParseHCoord(parser);
 
         //    parser.Space = new RectangleF(
         //        x.GetAbsoluteValue(parser), 
@@ -48,10 +48,10 @@ namespace IngameScript
         //{
         //    parse.Move(); // FR
 
-        //    var x = (XCoord)ParseCoord(parse);
-        //    var y = (YCoord)ParseCoord(parse);
-        //    var w = (WCoord)ParseCoord(parse);
-        //    var h = (HCoord)ParseCoord(parse);
+        //    var x = (XCoord)ParseXCoord(parse);
+        //    var y = (YCoord)ParseYCoord(parse);
+        //    var w = (WCoord)ParseWCoord(parse);
+        //    var h = (HCoord)ParseHCoord(parse);
 
         //    FillRect(
         //        parse.Displays[0].Sprites, 
@@ -70,10 +70,10 @@ namespace IngameScript
         //{
         //    parse.Move(); // FE
 
-        //    var x  = (XCoord)ParseCoord(parse);
-        //    var y  = (YCoord)ParseCoord(parse);
-        //    var rx = (WCoord)ParseCoord(parse);
-        //    var ry = (HCoord)ParseCoord(parse);
+        //    var x  = (XCoord)ParseXCoord(parse);
+        //    var y  = (YCoord)ParseYCoord(parse);
+        //    var rx = (WCoord)ParseWCoord(parse);
+        //    var ry = (HCoord)ParseHCoord(parse);
 
         //    FillEllipse(
         //        parse.Displays[0].Sprites, 

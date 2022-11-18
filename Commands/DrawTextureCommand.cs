@@ -22,7 +22,7 @@ namespace IngameScript
 {
     partial class Program
     {
-        public class DrawTexture : DrawCommand
+        public class DrawTextureCommand : DrawCommand
         { 
             public const string  Keyword = "tex";
 
@@ -34,7 +34,7 @@ namespace IngameScript
 
 
 
-            public DrawTexture(SpriteTexture tex, XCoord x, YCoord y, WCoord width, HCoord height) : base(x, y)
+            public DrawTextureCommand(SpriteTexture tex, XCoord x, YCoord y, WCoord width, HCoord height) : base(x, y)
             {
                 Texture = tex;
 
@@ -67,19 +67,20 @@ namespace IngameScript
 
         public bool ParseDrawTexture(Parser parser)
         {
-            if (!parser.Match(DrawTexture.Keyword))
+            if (!parser.Match(DrawTextureCommand.Keyword))
                 return false;
 
             var tag = parser.Move();
             var tex = SpriteTexture.From(tag);
 
-            var x   = (XCoord)ParseCoord(parser);
-            var y   = (YCoord)ParseCoord(parser);
-            var w   = (WCoord)ParseCoord(parser);
-            var h   = (HCoord)ParseCoord(parser);
+
+            var x   = ParseXCoord(parser);
+            var y   = ParseYCoord(parser);
+            var w   = ParseWCoord(parser);
+            var h   = ParseHCoord(parser);
 
 
-            parser.AddCommand(new DrawTexture(tex, x, y, w, h));
+            parser.AddCommand(new DrawTextureCommand(tex, x, y, w, h));
 
 
             return false;

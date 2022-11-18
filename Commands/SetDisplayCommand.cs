@@ -22,7 +22,7 @@ namespace IngameScript
 {
     partial class Program
     {
-        public class SetDisplay : Command
+        public class SetDisplayCommand : Command
         {
             public const string  Keyword = "dsp";
 
@@ -37,7 +37,7 @@ namespace IngameScript
 
 
 
-            public SetDisplay(List<Display> displays, int ax, int ay, int maxX, int maxY)
+            public SetDisplayCommand(List<Display> displays, int ax, int ay, int maxX, int maxY)
             {
                 Displays = displays;
 
@@ -79,7 +79,7 @@ namespace IngameScript
 
         public bool ParseSetDisplay(Parser parser)
         {
-            if (!parser.Match(SetDisplay.Keyword)) 
+            if (!parser.Match(SetDisplayCommand.Keyword)) 
                 return false;
 
 
@@ -150,7 +150,7 @@ namespace IngameScript
             }
 
 
-            parser.AddCommand(new SetDisplay(displays, ax, ay, max[ax], max[ay]));
+            parser.AddCommand(new SetDisplayCommand(displays, ax, ay, max[ax], max[ay]));
 
 
             return true;
@@ -158,7 +158,7 @@ namespace IngameScript
 
 
 
-        public void ParseDisplay(List<Display> displays, Parser parser)
+        public void ParseSetDisplay(List<Display> displays, Parser parser)
         {
             var name  = parser.Move();
             var panel = Get(name) as IMyTextPanel;

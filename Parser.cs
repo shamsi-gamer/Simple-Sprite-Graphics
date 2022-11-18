@@ -103,6 +103,9 @@ namespace IngameScript
             {
                 foreach (var cmd in Commands)
                     cmd.Eval(this);
+
+                foreach (var dsp in CurrentScope.Displays)
+                    dsp.FlushSprites();
             }
         }
 
@@ -121,18 +124,22 @@ namespace IngameScript
             for (var i = 0; i < qparts.Length; i += 2)
             {
                 qparts[i] = qparts[i]
-                    .Replace("\n", " ")  // new lines and tabs
-                    .Replace("\t", " "); // are white space only outside of quotes
+                    .Replace("\r\n", " ")  // new lines and tabs
+                    .Replace("\n",   " ")  // are white space
+                    .Replace("\t",   " "); // only outside of quotes
 
                 var sparts = qparts[i].Split(new char[] {' '}, StringSplitOptions.RemoveEmptyEntries);
 
                 foreach (var part in sparts)
                     tokens.Add(part);
 
-                if (i < qparts.Length - 1)                           // string literal after first quote
+                if (i < qparts.Length - 1) // string literal after first quote
                     tokens.Add(qparts[i+1].Replace("\uFFFC", "\"")); // restore escaped quotes
             }
 
+
+            foreach (var token in tokens)
+                logPanel.WriteText("token = " + token + "\n", true);
 
             return tokens;
         }
@@ -149,37 +156,41 @@ namespace IngameScript
             while (   parser.Pos < parser.Tokens.Length
                    && overflowProtect > 0)
             {
-                if (parser.Next[0] == '#')
-                    parser.CurrentScope.Color = ColorFromHex(parser.Move());
 
-                else
+                logPanel.WriteText("next = " + parser.Next + "\n", true);
+                switch (parser.Next.ToLower())
                 {
-                    logPanel.WriteText("next = " + parser.Next + "\n", true);
-                    switch (parser.Next.ToLower())
-                    {
-                        case SetDisplay .Keyword: ParseSetDisplay(parser); break;
-                        //case "sp":  if (!ParseSpace      (parse)) return false; break;
+                    case SetDisplayCommand .Keyword: ParseSetDisplay (parser); break;
+                    //case "sp":  if (!ParseSpace      (parse)) return false; break;
+                    
+                    case SetColorCommand   .Keyword: ParseSetColor   (parser); break;
 
-                        case DrawTexture.Keyword: ParseDrawTexture(parser); break;
+                    case DrawTextureCommand.Keyword: ParseDrawTexture(parser); break;
 
-                        //case "fr":  if (!ParseFillRect   (parse)) return false; break;
+                    //case "fr":  if (!ParseFillRect   (parse)) return false; break;
 
-                        //case "fe":  if (!ParseFillEllipse(parse)) return false; break;
-                        //case "fc":  if (!ParseFillCircle (parse)) return false; break;
+                    //case "fe":  if (!ParseFillEllipse(parse)) return false; break;
+                    //case "fc":  if (!ParseFillCircle (parse)) return false; break;
 
-                        //case "lw":  if (!ParseLineWidth  (parse)) return false; break;
-                        //case "dl":  if (!ParseDrawLine   (parse)) return false; break;
+                    //case "lw":  if (!ParseLineWidth  (parse)) return false; break;
+                    //case "dl":  if (!ParseDrawLine   (parse)) return false; break;
 
-                        //case "ds":  if (!ParseDrawString (parse)) return false; break;
+                    //case "ds":  if (!ParseDrawString (parse)) return false; break;
 
-                        default: overflowProtect--; break;
-                    }
+                    default: overflowProtect--; break;
                 }
             }
 
 
             return parser;
         }
+
+
+
+        public XCoord ParseXCoord(Parser parser) { var coord = ParseCoord(parser); return new XCoord(coord.Value, coord.Percent); }
+        public YCoord ParseYCoord(Parser parser) { var coord = ParseCoord(parser); return new YCoord(coord.Value, coord.Percent); }
+        public WCoord ParseWCoord(Parser parser) { var coord = ParseCoord(parser); return new WCoord(coord.Value, coord.Percent); }
+        public HCoord ParseHCoord(Parser parser) { var coord = ParseCoord(parser); return new HCoord(coord.Value, coord.Percent); }
 
 
 
