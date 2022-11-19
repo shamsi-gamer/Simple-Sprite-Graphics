@@ -55,7 +55,7 @@ namespace IngameScript
                 var scope = parser.CurrentScope;
 
 
-                scope.Displays.ForEach(d => d.FlushSprites());
+                //scope.Displays.ForEach(d => d.FlushSprites());
 
 
                 scope.Displays = Displays;
@@ -64,11 +64,19 @@ namespace IngameScript
                        d.Panel.Max[AxisX] == MaxX
                     && d.Panel.Max[AxisY] == MaxY);
 
+
                 scope.Area = new CRectangle(
                     new XCoord(0),
                     new YCoord(0),
-                    new WCoord(dspBR.Offset.X + dspBR.Surface.TextureSize.X),
-                    new HCoord(dspBR.Offset.Y + dspBR.Surface.TextureSize.Y));
+                    new WCoord(dspBR.Offset.X + dspBR.Surface.SurfaceSize.X),
+                    new HCoord(dspBR.Offset.Y + dspBR.Surface.SurfaceSize.Y));
+
+
+                scope.AbsoluteArea = new RectangleF(
+                    scope.Area.X     .Value,
+                    scope.Area.Y     .Value,
+                    scope.Area.Width .Value,
+                    scope.Area.Height.Value);
             }
         }
 
@@ -144,8 +152,13 @@ namespace IngameScript
                 { 
                     var pos = dsp.Panel.Position;
 
-                    dsp.Offset[ax] = (pos[ax] - min[ax]) * dsp.Surface.TextureSize.X; // TODO judging by its own size for now 
-                    dsp.Offset[ay] = (pos[ay] - min[ay]) * dsp.Surface.TextureSize.Y;
+                    dsp.Offset[ax] = (dsp.Panel.Min[ax] - min[ax]) * dsp.Surface.SurfaceSize.X; // TODO judging by its own size for now 
+                    dsp.Offset[ay] = (dsp.Panel.Min[ay] - min[ay]) * dsp.Surface.SurfaceSize.Y;
+
+                    logPanel.WriteText("ax = " + ax + "\n", true);
+                    logPanel.WriteText("dsp.Offset[ax] = " + dsp.Offset[ax] + "\n", true);
+                    logPanel.WriteText("ay = " + ay + "\n", true);
+                    logPanel.WriteText("dsp.Offset[ay] = " + dsp.Offset[ay] + "\n", true);
                 }
             }
 
@@ -158,13 +171,20 @@ namespace IngameScript
 
 
 
-        public void ParseSetDisplay(List<Display> displays, Parser parser)
+        public void ParseDisplay(List<Display> displays, Parser parser)
         {
-            var name  = parser.Move();
+            var name = parser.Move();
             var panel = Get(name) as IMyTextPanel;
 
             if (panel != null)
-                displays.Add(new Display(panel));
+            {
+                var dsp = new Display(panel);
+
+                if (!parser.Displays.Contains(dsp))
+                    parser.Displays.Add(dsp);
+
+                displays.Add(dsp);
+            }
         }
     }
 }

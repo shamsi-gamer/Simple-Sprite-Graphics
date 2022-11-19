@@ -30,7 +30,7 @@ namespace IngameScript
             public List<Scope>   Scopes;
             public Scope         CurrentScope;
 
-            public bool          HasNext           { get { return Pos+1 < Tokens.Length;   } }
+            public bool          HasNext           { get { return Pos+1 < Tokens.Length; } }
 
             public bool          NextIsPunctuation { get { return Punctuation.Contains(Next); } }
             public bool          NextIsKeyword     { get { return Keywords   .Contains(Next); } }
@@ -39,7 +39,9 @@ namespace IngameScript
                                                                || NextIsKeyword; } }
 
             public string        Next              { get { return Tokens[Pos]; } }
-                                                
+         
+            
+            public List<Display> Displays;
             public List<Command> Commands;
 
 
@@ -54,6 +56,7 @@ namespace IngameScript
 
                 CurrentScope = Scopes[0];
 
+                Displays     = new List<Display>();
                 Commands     = new List<Command>();
             }
 
@@ -104,7 +107,7 @@ namespace IngameScript
                 foreach (var cmd in Commands)
                     cmd.Eval(this);
 
-                foreach (var dsp in CurrentScope.Displays)
+                foreach (var dsp in Displays)
                     dsp.FlushSprites();
             }
         }
@@ -138,8 +141,8 @@ namespace IngameScript
             }
 
 
-            foreach (var token in tokens)
-                logPanel.WriteText("token = " + token + "\n", true);
+            //foreach (var token in tokens)
+            //    logPanel.WriteText("token = " + token + "\n", true);
 
             return tokens;
         }
@@ -164,6 +167,7 @@ namespace IngameScript
                     //case "sp":  if (!ParseSpace      (parse)) return false; break;
                     
                     case SetColorCommand   .Keyword: ParseSetColor   (parser); break;
+                    case SetRotationCommand.Keyword: ParseSetRotation(parser); break;
 
                     case DrawTextureCommand.Keyword: ParseDrawTexture(parser); break;
 

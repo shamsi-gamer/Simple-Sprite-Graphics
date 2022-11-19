@@ -48,6 +48,8 @@ namespace IngameScript
             {
                 var scope = parser.CurrentScope;
 
+                //logPanel.WriteText("scope.Color = " + scope.Color + "\n", true);
+
                 scope.Displays[0].DrawTexture(
                     scope.Displays[0].Sprites, 
                     Texture.ID, 
@@ -55,9 +57,10 @@ namespace IngameScript
                     Y     .GetAbsoluteValue(scope), 
                     Width .GetAbsoluteValue(scope),
                     Height.GetAbsoluteValue(scope), 
-                    scope.Color);
+                    scope.Color,
+                    scope.Rotation);
 
-                logPanel.WriteText("DrawTexture.Eval()\n", true);
+                //logPanel.WriteText("scope.Displays[0].Sprites.Count = " + scope.Displays[0].Sprites.Count + "\n", true);
             }
         }
 
@@ -73,15 +76,12 @@ namespace IngameScript
             var tag = parser.Move();
             var tex = SpriteTexture.From(tag);
 
-
             var x   = ParseXCoord(parser);
             var y   = ParseYCoord(parser);
             var w   = ParseWCoord(parser);
             var h   = ParseHCoord(parser);
 
-
             parser.AddCommand(new DrawTextureCommand(tex, x, y, w, h));
-
 
             return false;
         }

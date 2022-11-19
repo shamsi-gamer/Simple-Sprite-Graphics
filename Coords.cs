@@ -135,6 +135,17 @@ namespace IngameScript
                 Width  = new WCoord(rect.Width );
                 Height = new HCoord(rect.Height);
             }
+
+
+
+            public RectangleF GetAbsoluteValue(Scope scope)
+            {
+                return new RectangleF(
+                    X     .GetAbsoluteValue(scope),
+                    Y     .GetAbsoluteValue(scope),
+                    Width .GetAbsoluteValue(scope),
+                    Height.GetAbsoluteValue(scope));
+            }
         }
     }
 }

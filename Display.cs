@@ -217,8 +217,13 @@ namespace IngameScript
 
             public void FlushSprites()
             {
-                Draw(Sprites);
-                Sprites = new List<MySprite>();
+                if (Sprites.Count > 0)
+                {
+                    logPanel.WriteText("Sprites.Count = " + Sprites.Count + "\n", true);
+                    Draw(Sprites);
+                }
+
+                Sprites.Clear();
             }
         }
     }

@@ -63,17 +63,6 @@ namespace IngameScript
 
 
 
-        public void ParseDisplay(List<Display> displays, Parser parser)
-        {
-            var name  = parser.Move();
-            var panel = Get(name) as IMyTextPanel;
-
-            if (panel != null)
-                displays.Add(new Display(panel));
-        }
-
-
-
         static Color ParseHexColor(string hex)
         {
             if (hex.Length == 0)
