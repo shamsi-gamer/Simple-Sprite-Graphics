@@ -24,7 +24,7 @@ namespace IngameScript
     {
         public class DrawTextureCommand : DrawCommand
         { 
-            public const string  Keyword = "tex";
+            public const string  Keyword = "dtex";
 
 
             public SpriteTexture Texture;

@@ -18,36 +18,13 @@ using VRage.Game.ModAPI.Ingame.Utilities;
 using VRage.Game.ObjectBuilders.Definitions;
 using VRageMath;
 
-
-
 namespace IngameScript
-{ 
-    partial class Program : MyGridProgram
+{
+    partial class Program
     {
-        public void Main(string arg, UpdateType update)
+        public class DrawLineCommand
         {
-            //ProcessArg(arg);
 
-            if ((update & UpdateType.Update10 ) != 0) Update10 ();
-            if ((update & UpdateType.Update100) != 0) Update100();
-        }
-
-
-
-        public void Update10()
-        {
-            parser.EvalCommands();
-        }
-
-
-
-        public void Update100()
-        {
-            if (   Me.CustomData.Length        != codeLength
-                || Me.CustomData.GetHashCode() != codeHash)
-                ParseCode();
-
-            parser.EvalCommands();
         }
     }
 }

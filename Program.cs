@@ -97,19 +97,22 @@ namespace IngameScript
     {
         public static IMyTextPanel logPanel;
 
-        Parser parser;
+        public int    codeLength;
+        public int    codeHash;
+
+        public Parser parser;
 
 
         public Program()
         {
             logPanel = Get("Log Panel") as IMyTextPanel;
             logPanel.ContentType = ContentType.TEXT_AND_IMAGE;
-            logPanel.WriteText("");
 
-            var tokens = Scan(Me.CustomData);
-                parser = Parse(tokens);
+            Runtime.UpdateFrequency = 
+                  UpdateFrequency.Update10
+                | UpdateFrequency.Update100;
 
-            Runtime.UpdateFrequency = UpdateFrequency.Update10;
+            ParseCode();
         }
     }
 }

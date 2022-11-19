@@ -39,7 +39,11 @@
   <Import Project="MDK/MDK.paths.props" Condition="exists('MDK/MDK.paths.props')" />
   <ItemGroup>
     <Compile Include="Commands\Command.cs" />
+    <Compile Include="Commands\DrawLineCommand.cs" />
     <Compile Include="Commands\DrawTextureCommand.cs" />
+    <Compile Include="Commands\FillCircleCommand.cs" />
+    <Compile Include="Commands\FillEllipseCommand.cs" />
+    <Compile Include="Commands\FillRectangleCommand.cs" />
     <Compile Include="Commands\SetColorCommand.cs" />
     <Compile Include="Commands\SetRotationCommand.cs" />
     <Compile Include="Coords.cs" />

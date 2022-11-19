@@ -30,7 +30,7 @@ namespace IngameScript
             public List<Scope>   Scopes;
             public Scope         CurrentScope;
 
-            public bool          HasNext           { get { return Pos+1 < Tokens.Length; } }
+            public bool          HasNext           { get { return Pos + 1 < Tokens.Length; } }
 
             public bool          NextIsPunctuation { get { return Punctuation.Contains(Next); } }
             public bool          NextIsKeyword     { get { return Keywords   .Contains(Next); } }
@@ -114,6 +114,19 @@ namespace IngameScript
 
 
 
+        public void ParseCode()
+        {
+            logPanel.WriteText("");
+
+            codeLength = Me.CustomData.Length;
+            codeHash   = Me.CustomData.GetHashCode();
+
+            var tokens = Scan(Me.CustomData);
+            parser = Parse(tokens);
+        }
+
+
+
         public List<string> Scan(string ssg)
         {
             ssg = ssg.Replace("\\\"", "\uFFFC"); // guard escaped quotes
@@ -166,10 +179,12 @@ namespace IngameScript
                     case SetDisplayCommand .Keyword: ParseSetDisplay (parser); break;
                     //case "sp":  if (!ParseSpace      (parse)) return false; break;
                     
-                    case SetColorCommand   .Keyword: ParseSetColor   (parser); break;
-                    case SetRotationCommand.Keyword: ParseSetRotation(parser); break;
+                    case SetColorCommand     .Keyword: ParseSetColor     (parser); break;
+                    case SetRotationCommand  .Keyword: ParseSetRotation  (parser); break;
 
-                    case DrawTextureCommand.Keyword: ParseDrawTexture(parser); break;
+                    case DrawTextureCommand  .Keyword: ParseDrawTexture  (parser); break;
+                    case FillRectangleCommand.Keyword: ParseFillRectangle(parser); break;
+                    case FillEllipseCommand  .Keyword: ParseFillEllipse  (parser); break;
 
                     //case "fr":  if (!ParseFillRect   (parse)) return false; break;
 
