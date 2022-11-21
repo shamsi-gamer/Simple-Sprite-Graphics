@@ -39,19 +39,21 @@
   <Import Project="MDK/MDK.paths.props" Condition="exists('MDK/MDK.paths.props')" />
   <ItemGroup>
     <Compile Include="Commands\Command.cs" />
-    <Compile Include="Commands\DrawLineCommand.cs" />
-    <Compile Include="Commands\DrawTextureCommand.cs" />
-    <Compile Include="Commands\FillCircleCommand.cs" />
-    <Compile Include="Commands\FillEllipseCommand.cs" />
-    <Compile Include="Commands\FillRectangleCommand.cs" />
-    <Compile Include="Commands\SetColorCommand.cs" />
-    <Compile Include="Commands\SetRotationCommand.cs" />
+    <Compile Include="Commands\DrawLine.cs" />
+    <Compile Include="Commands\DrawRectangle.cs" />
+    <Compile Include="Commands\DrawString.cs" />
+    <Compile Include="Commands\DrawTexture.cs" />
+    <Compile Include="Commands\FillCircle.cs" />
+    <Compile Include="Commands\FillEllipse.cs" />
+    <Compile Include="Commands\FillRectangle.cs" />
+    <Compile Include="Commands\SetColor.cs" />
+    <Compile Include="Commands\SetRotation.cs" />
     <Compile Include="Coords.cs" />
     <Compile Include="Keywords.cs" />
     <Compile Include="Math.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Scope.cs" />
-    <Compile Include="Commands\SetDisplayCommand.cs" />
+    <Compile Include="Commands\SetDisplay.cs" />
     <Compile Include="SpriteList.cs" />
     <Compile Include="SSG.cs" />
     <Compile Include="Display.cs" />

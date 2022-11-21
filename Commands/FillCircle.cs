@@ -22,43 +22,32 @@ namespace IngameScript
 {
     partial class Program
     {
-        public class SetRotationCommand : Command
+        public class FillCircle : DrawTexture
         {
-            public const string Keyword = "rot";
+            public new const string Keyword = "fcrc";
 
 
-            public float        Rotation;
-
-
-            public SetRotationCommand(float rot)
-            {
-                Rotation = rot;
-            }
-
-
-
-            public override void Eval(Parser parser) 
-            {
-                parser.CurrentScope.Rotation = Rotation/360f * Tau;
-            }
+            public FillCircle(XCoord x, YCoord y, WCoord w, HCoord h)
+                : base(CircleTexture, x, y, new WCoord(h.Value, h.Percent), h) { }
         }
 
 
 
-        // ROT deg
+        // FCRC X Y W H
 
-        public bool ParseSetRotation(Parser parser)
+        public bool ParseFillCircle(Parser parser)
         {
-            if (!parser.Match(SetColorCommand.Keyword)) 
+            if (!parser.Match(FillCircle.Keyword))
                 return false;
 
+            var x = ParseXCoord(parser);
+            var y = ParseYCoord(parser);
+            var w = ParseWCoord(parser);
+            var h = ParseHCoord(parser);
 
-            var color = float.Parse(parser.Move());
+            parser.AddCommand(new FillCircle(x, y, w, h));
 
-            parser.AddCommand(new SetRotationCommand(color));
-
-
-            return true;
+            return false;
         }
     }
 }

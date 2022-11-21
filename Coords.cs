@@ -18,6 +18,7 @@ using VRage.Game.ModAPI.Ingame.Utilities;
 using VRage.Game.ObjectBuilders.Definitions;
 using VRageMath;
 
+
 namespace IngameScript
 {
     partial class Program
@@ -42,7 +43,7 @@ namespace IngameScript
             }
 
 
-            public virtual float GetAbsoluteValue(Scope scope)
+            public virtual float Abs(Scope scope)
             { 
                 return float.NaN; 
             }
@@ -55,7 +56,7 @@ namespace IngameScript
             public WCoord(float val, bool percent = false) : base(val, percent) { }
             public WCoord(WCoord coord) : base(coord) { }
 
-            public override float GetAbsoluteValue(Scope scope) 
+            public override float Abs(Scope scope) 
             {
                 return Value * (Percent ? scope.AbsoluteArea.Width/100 : 1);
             }
@@ -68,7 +69,7 @@ namespace IngameScript
             public HCoord(float val, bool percent = false) : base(val, percent) { }
             public HCoord(HCoord coord) : base(coord) { }
 
-            public override float GetAbsoluteValue(Scope scope) 
+            public override float Abs(Scope scope) 
             {
                 return Value * (Percent ? scope.AbsoluteArea.Height/100 : 1);
             }
@@ -81,9 +82,9 @@ namespace IngameScript
             public XCoord(float val, bool percent = false) : base(val, percent) { }
             public XCoord(XCoord coord) : base(coord) { }
 
-            public override float GetAbsoluteValue(Scope scope) 
+            public override float Abs(Scope scope) 
             {
-                return base.GetAbsoluteValue(scope) + (Percent ? scope.AbsoluteArea.X : 0);
+                return base.Abs(scope) + (Percent ? scope.AbsoluteArea.X : 0);
             }
         }
 
@@ -94,9 +95,9 @@ namespace IngameScript
             public YCoord(float val, bool percent = false) : base(val, percent) { }
             public YCoord(YCoord coord) : base(coord) { }
 
-            public override float GetAbsoluteValue(Scope scope) 
+            public override float Abs(Scope scope) 
             {
-                return base.GetAbsoluteValue(scope) + (Percent ? scope.AbsoluteArea.Y : 0);
+                return base.Abs(scope) + (Percent ? scope.AbsoluteArea.Y : 0);
             }
         }
 
@@ -141,10 +142,10 @@ namespace IngameScript
             public RectangleF GetAbsoluteValue(Scope scope)
             {
                 return new RectangleF(
-                    X     .GetAbsoluteValue(scope),
-                    Y     .GetAbsoluteValue(scope),
-                    Width .GetAbsoluteValue(scope),
-                    Height.GetAbsoluteValue(scope));
+                    X     .Abs(scope),
+                    Y     .Abs(scope),
+                    Width .Abs(scope),
+                    Height.Abs(scope));
             }
         }
     }

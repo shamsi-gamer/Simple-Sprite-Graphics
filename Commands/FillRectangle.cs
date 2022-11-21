@@ -22,12 +22,11 @@ namespace IngameScript
 {
     partial class Program
     {
-        public class FillRectangleCommand : DrawTextureCommand
+        public class FillRectangle : DrawTexture
         {
             public new const string Keyword = "frect";
-            
-            
-            public FillRectangleCommand(XCoord x, YCoord y, WCoord w, HCoord h) 
+                        
+            public FillRectangle(XCoord x, YCoord y, WCoord w, HCoord h) 
                 : base(SquareTexture, x, y, w, h) { }
         }
 
@@ -37,7 +36,7 @@ namespace IngameScript
 
         public bool ParseFillRectangle(Parser parser)
         {
-            if (!parser.Match(FillRectangleCommand.Keyword))
+            if (!parser.Match(FillRectangle.Keyword))
                 return false;
 
             var x = ParseXCoord(parser);
@@ -45,7 +44,7 @@ namespace IngameScript
             var w = ParseWCoord(parser);
             var h = ParseHCoord(parser);
 
-            parser.AddCommand(new FillRectangleCommand(x, y, w, h));
+            parser.AddCommand(new FillRectangle(x, y, w, h));
 
             return false;
         }

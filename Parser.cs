@@ -176,25 +176,22 @@ namespace IngameScript
                 logPanel.WriteText("next = " + parser.Next + "\n", true);
                 switch (parser.Next.ToLower())
                 {
-                    case SetDisplayCommand .Keyword: ParseSetDisplay (parser); break;
-                    //case "sp":  if (!ParseSpace      (parse)) return false; break;
+                    case SetDisplay      .Keyword: ParseSetDisplay (parser); break;
                     
-                    case SetColorCommand     .Keyword: ParseSetColor     (parser); break;
-                    case SetRotationCommand  .Keyword: ParseSetRotation  (parser); break;
+                    case SetColor        .Keyword: ParseSetColor     (parser); break;
+                    //case SetFont         .Keyword: ParseSetFont      (parser); break;
+                    //case SetFontSize     .Keyword: ParseSetFontSize  (parser); break;
+                    //case SetTextAlignment.Keyword: ParseSetFontSize  (parser); break;
+                    //case SetLineWidth    .Keyword: ParseSetLineWidth (parser); break;
+                    case SetRotation     .Keyword: ParseSetRotation  (parser); break;
 
-                    case DrawTextureCommand  .Keyword: ParseDrawTexture  (parser); break;
-                    case FillRectangleCommand.Keyword: ParseFillRectangle(parser); break;
-                    case FillEllipseCommand  .Keyword: ParseFillEllipse  (parser); break;
+                    case DrawString      .Keyword: ParseDrawString   (parser); break;
+                    case DrawTexture     .Keyword: ParseDrawTexture  (parser); break;
+                    case FillRectangle   .Keyword: ParseFillRectangle(parser); break;
+                    case DrawRectangle   .Keyword: ParseDrawRectangle(parser); break;
+                    case FillEllipse     .Keyword: ParseFillEllipse  (parser); break;
+                    case DrawLine        .Keyword: ParseDrawLine     (parser); break;
 
-                    //case "fr":  if (!ParseFillRect   (parse)) return false; break;
-
-                    //case "fe":  if (!ParseFillEllipse(parse)) return false; break;
-                    //case "fc":  if (!ParseFillCircle (parse)) return false; break;
-
-                    //case "lw":  if (!ParseLineWidth  (parse)) return false; break;
-                    //case "dl":  if (!ParseDrawLine   (parse)) return false; break;
-
-                    //case "ds":  if (!ParseDrawString (parse)) return false; break;
 
                     default: overflowProtect--; break;
                 }

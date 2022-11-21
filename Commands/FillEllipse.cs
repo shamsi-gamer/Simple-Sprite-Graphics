@@ -22,13 +22,39 @@ namespace IngameScript
 {
     partial class Program
     {
-        public class FillEllipseCommand : DrawTextureCommand
+        public class FillEllipse : DrawTexture
         {
             public new const string Keyword = "felps";
 
 
-            public FillEllipseCommand(XCoord x, YCoord y, WCoord w, HCoord h)
+
+            public FillEllipse(XCoord x, YCoord y, WCoord w, HCoord h)
                 : base(CircleTexture, x, y, w, h) { }
+
+
+
+            public override void Eval(Parser parser) 
+            {
+                var scope = parser.CurrentScope;
+
+                //logPanel.WriteText("scope.Color = " + scope.Color + "\n", true);
+
+                var x = X     .Abs(scope);
+                var y = Y     .Abs(scope);
+                var w = Width .Abs(scope);
+                var h = Height.Abs(scope);
+
+                scope.Displays[0].DrawTexture(
+                    Texture.ID, 
+                    x - w, 
+                    y - h, 
+                    w,
+                    h, 
+                    scope.Color,
+                    scope.Rotation);
+
+                //logPanel.WriteText("scope.Displays[0].Sprites.Count = " + scope.Displays[0].Sprites.Count + "\n", true);
+            }
         }
 
 
@@ -37,7 +63,7 @@ namespace IngameScript
 
         public bool ParseFillEllipse(Parser parser)
         {
-            if (!parser.Match(FillEllipseCommand.Keyword))
+            if (!parser.Match(FillEllipse.Keyword))
                 return false;
 
             var x = ParseXCoord(parser);
@@ -45,7 +71,7 @@ namespace IngameScript
             var w = ParseWCoord(parser);
             var h = ParseHCoord(parser);
 
-            parser.AddCommand(new FillEllipseCommand(x, y, w, h));
+            parser.AddCommand(new FillEllipse(x, y, w, h));
 
             return false;
         }

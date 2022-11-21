@@ -22,19 +22,19 @@ namespace IngameScript
 {
     partial class Program
     {
-        public class DrawTextureCommand : DrawCommand
+        public class DrawTexture : DrawCommand
         { 
-            public const string  Keyword = "dtex";
+            public const string Keyword = "tex";
 
 
-            public SpriteTexture Texture;
+            public Texture Texture;
 
-            public WCoord        Width;
-            public HCoord        Height;
+            public WCoord  Width;
+            public HCoord  Height;
 
 
 
-            public DrawTextureCommand(SpriteTexture tex, XCoord x, YCoord y, WCoord width, HCoord height) : base(x, y)
+            public DrawTexture(Texture tex, XCoord x, YCoord y, WCoord width, HCoord height) : base(x, y)
             {
                 Texture = tex;
 
@@ -48,19 +48,19 @@ namespace IngameScript
             {
                 var scope = parser.CurrentScope;
 
-                //logPanel.WriteText("scope.Color = " + scope.Color + "\n", true);
+                var x = X     .Abs(scope);
+                var y = Y     .Abs(scope);
+                var w = Width .Abs(scope);
+                var h = Height.Abs(scope);
 
                 scope.Displays[0].DrawTexture(
-                    scope.Displays[0].Sprites, 
-                    Texture.ID, 
-                    X     .GetAbsoluteValue(scope), 
-                    Y     .GetAbsoluteValue(scope), 
-                    Width .GetAbsoluteValue(scope),
-                    Height.GetAbsoluteValue(scope), 
+                    Texture.ID,
+                    x - w/2, 
+                    y - h/2, 
+                    w,
+                    h, 
                     scope.Color,
                     scope.Rotation);
-
-                //logPanel.WriteText("scope.Displays[0].Sprites.Count = " + scope.Displays[0].Sprites.Count + "\n", true);
             }
         }
 
@@ -70,18 +70,18 @@ namespace IngameScript
 
         public bool ParseDrawTexture(Parser parser)
         {
-            if (!parser.Match(DrawTextureCommand.Keyword))
+            if (!parser.Match(DrawTexture.Keyword))
                 return false;
 
             var tag = parser.Move();
-            var tex = SpriteTexture.From(tag);
+            var tex = Texture.From(tag);
 
             var x   = ParseXCoord(parser);
             var y   = ParseYCoord(parser);
             var w   = ParseWCoord(parser);
             var h   = ParseHCoord(parser);
 
-            parser.AddCommand(new DrawTextureCommand(tex, x, y, w, h));
+            parser.AddCommand(new DrawTexture(tex, x, y, w, h));
 
             return false;
         }

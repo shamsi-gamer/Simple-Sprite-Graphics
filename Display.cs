@@ -94,9 +94,9 @@ namespace IngameScript
 
 
 
-            public void DrawString(List<MySprite> sprites, string str, float x, float y, float scale, Color c, TextAlignment align = TextAlignment.LEFT, string font = "Monospace")
+            public void DrawString(string str, float x, float y, float scale, Color c, TextAlignment align = TextAlignment.LEFT, string font = "Monospace")
             {
-                sprites.Add(new MySprite()
+                Sprites.Add(new MySprite()
                 {
                     Type            = SpriteType.TEXT,
                     Data            = str,
@@ -110,13 +110,16 @@ namespace IngameScript
 
 
 
-            public void DrawTexture(List<MySprite> sprites, string texture, Vector2 pos, Vector2 size, Color c, float rotation = 0)
+            public void DrawTexture(string texture, float x, float y, float w, float h, Color c, float rotation = 0)
             {
-                sprites.Add(new MySprite()
+                var pos  = new Vector2(x, y);
+                var size = new Vector2(w, h);
+
+                Sprites.Add(new MySprite()
                 {
                     Type            = SpriteType.TEXTURE,
                     Data            = texture,
-                    Position        = pos + size/2,
+                    Position        = pos + size,
                     Size            = size,
                     Color           = c,
                     Alignment       = TextAlignment.CENTER,
@@ -126,61 +129,40 @@ namespace IngameScript
 
 
 
-            public void DrawTexture(List<MySprite> sprites, string texture, float x, float y, float w, float h, Color c, float rotation = 0)
+            public void FillRect(float x, float y, float w, float h, Color c)
             {
-                DrawTexture(sprites, texture, new Vector2(x, y), new Vector2(w, h), c, rotation);
+                DrawTexture("SquareSimple", x, y, w, h, c);
             }
 
 
 
-            public void FillRect(List<MySprite> sprites, float x, float y, float w, float h, Color c)
+            public void FillEllipse(float x, float y, float rx, float ry, Color c)
             {
-                DrawTexture(sprites, "SquareSimple", x, y, w, h, c);
+                DrawTexture(
+                    CircleTexture.ID, 
+                    x - rx, 
+                    y - ry, 
+                    rx*2, 
+                    ry*2, 
+                    c);
             }
 
 
 
-            //public void FillEllipse(List<MySprite> sprites, Vector2 p, Vector2 r, Color color)
-            //{
-            //    DrawTexture(sprites, "Circle", p.X - r.X, p.Y - r.Y, r.X * 2, r.Y * 2, color);
-            //}
-
-
-
-            public void FillEllipse(List<MySprite> sprites, float x, float y, float rx, float ry, Color color)
+            public void DrawLine(float x1, float y1, float x2, float y2, Color c, float w = 1)
             {
-                DrawTexture(sprites, "Circle", x - rx, y - ry, rx*2, ry*2, color);
-            }
-
-
-
-            public void DrawLine(List<MySprite> sprites, Vector2 p1, Vector2 p2, Color col, float width = 1)
-            {
-                var dp    = p2 - p1;
+                var dp    = new Vector2(x2, y2) - new Vector2(x1, y1);
                 var len   = dp.Length();
-                var angle = (float)Math.Atan2(p1.Y - p2.Y, p2.X - p1.X);
+                var angle = (float)Math.Atan2(y1 - y2, x2 - x1);
 
                 DrawTexture(
-                    sprites,
-                    "SquareSimple",
-                    p1.X + dp.X/2 - len/2,
-                    p1.Y + dp.Y/2 - width/2,
+                    SquareTexture.ID,
+                    x1 + dp.X/2 - len/2,
+                    y1 + dp.Y/2 - w/2,
                     len,
-                    width,
-                    col,
+                    w,
+                    c,
                     -angle);
-            }
-
-
-
-            public void DrawLine(List<MySprite> sprites, float x1, float y1, float x2, float y2, Color col, float width = 1)
-            {
-                DrawLine(
-                    sprites,
-                    new Vector2(x1, y1),
-                    new Vector2(x2, y2),
-                    col,
-                    width);
             }
 
 

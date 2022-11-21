@@ -22,7 +22,7 @@ namespace IngameScript
 {
     partial class Program
     {
-        public class SetDisplayCommand : Command
+        public class SetDisplay : Command
         {
             public const string  Keyword = "dsp";
 
@@ -37,7 +37,7 @@ namespace IngameScript
 
 
 
-            public SetDisplayCommand(List<Display> displays, int ax, int ay, int maxX, int maxY)
+            public SetDisplay(List<Display> displays, int ax, int ay, int maxX, int maxY)
             {
                 Displays = displays;
 
@@ -87,7 +87,7 @@ namespace IngameScript
 
         public bool ParseSetDisplay(Parser parser)
         {
-            if (!parser.Match(SetDisplayCommand.Keyword)) 
+            if (!parser.Match(SetDisplay.Keyword)) 
                 return false;
 
 
@@ -155,15 +155,13 @@ namespace IngameScript
                     dsp.Offset[ax] = (dsp.Panel.Min[ax] - min[ax]) * dsp.Surface.SurfaceSize.X; // TODO judging by its own size for now 
                     dsp.Offset[ay] = (dsp.Panel.Min[ay] - min[ay]) * dsp.Surface.SurfaceSize.Y;
 
-                    logPanel.WriteText("ax = " + ax + "\n", true);
-                    logPanel.WriteText("dsp.Offset[ax] = " + dsp.Offset[ax] + "\n", true);
-                    logPanel.WriteText("ay = " + ay + "\n", true);
-                    logPanel.WriteText("dsp.Offset[ay] = " + dsp.Offset[ay] + "\n", true);
+                    logPanel.WriteText("dsp.Offset[" + ax + "] = " + dsp.Offset[ax] + "\n", true);
+                    logPanel.WriteText("dsp.Offset[" + ay + "] = " + dsp.Offset[ay] + "\n", true);
                 }
             }
 
 
-            parser.AddCommand(new SetDisplayCommand(displays, ax, ay, max[ax], max[ay]));
+            parser.AddCommand(new SetDisplay(displays, ax, ay, max[ax], max[ay]));
 
 
             return true;

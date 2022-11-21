@@ -22,7 +22,7 @@ namespace IngameScript
 {
     partial class Program
     {
-        public class SetColorCommand : Command
+        public class SetColor : Command
         {
             public const string Keyword = "col";
 
@@ -30,7 +30,7 @@ namespace IngameScript
             public Color        Color;
 
 
-            public SetColorCommand(Color color)
+            public SetColor(Color color)
             {
                 Color = color;
             }
@@ -49,13 +49,13 @@ namespace IngameScript
 
         public bool ParseSetColor(Parser parser)
         {
-            if (!parser.Match(SetColorCommand.Keyword)) 
+            if (!parser.Match(SetColor.Keyword)) 
                 return false;
 
 
             var color = ParseHexColor(parser.Move());
 
-            parser.AddCommand(new SetColorCommand(color));
+            parser.AddCommand(new SetColor(color));
 
 
             return true;

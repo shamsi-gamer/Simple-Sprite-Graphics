@@ -24,9 +24,9 @@ namespace IngameScript
     {
         public static readonly string[] Keywords = new string[]
         { 
-            SetDisplayCommand .Keyword,
+            SetDisplay .Keyword,
 
-            DrawTextureCommand.Keyword
+            DrawTexture.Keyword
         };
 
 
