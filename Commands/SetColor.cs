@@ -73,50 +73,49 @@ namespace IngameScript
 
             var col = new Color();
 
+            const float gamma = 2;
 
-            if (hex.Length == 8)
+
+            if (hex.Length == 6)
             {
-                col.R = (byte)int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-                col.G = (byte)int.Parse(hex.Substring(2, 4), System.Globalization.NumberStyles.HexNumber);
-                col.B = (byte)int.Parse(hex.Substring(4, 6), System.Globalization.NumberStyles.HexNumber);
-                col.A = (byte)int.Parse(hex.Substring(6, 8), System.Globalization.NumberStyles.HexNumber);
+                var r = Math.Pow((float)int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber) / 0xff, gamma);
+                var g = Math.Pow((float)int.Parse(hex.Substring(2, 4), System.Globalization.NumberStyles.HexNumber) / 0xff, gamma);
+                var b = Math.Pow((float)int.Parse(hex.Substring(4, 6), System.Globalization.NumberStyles.HexNumber) / 0xff, gamma);
+
+                col.R = (byte)Math.Round(r * 0x7f);
+                col.G = (byte)Math.Round(g * 0x7f);
+                col.B = (byte)Math.Round(b * 0x7f);
+                col.A = 0xff;
             }
-            else if (hex.Length >= 6)
+            else if (hex.Length >= 3)
             {
-                col.R = (byte)int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-                col.G = (byte)int.Parse(hex.Substring(2, 4), System.Globalization.NumberStyles.HexNumber);
-                col.B = (byte)int.Parse(hex.Substring(4, 6), System.Globalization.NumberStyles.HexNumber);
-            }
-            else if (hex.Length >= 4)
-            {
-                col.R = (byte)(int.Parse(hex[0].ToString(), System.Globalization.NumberStyles.HexNumber) * 0x11);
-                col.G = (byte)(int.Parse(hex[1].ToString(), System.Globalization.NumberStyles.HexNumber) * 0x11);
-                col.B = (byte)(int.Parse(hex[2].ToString(), System.Globalization.NumberStyles.HexNumber) * 0x11);
-                col.A = (byte)(int.Parse(hex[3].ToString(), System.Globalization.NumberStyles.HexNumber) * 0x11);
-            }
-            else if (hex.Length == 3)
-            {
-                col.R = (byte)(int.Parse(hex[0].ToString(), System.Globalization.NumberStyles.HexNumber) * 0x11);
-                col.G = (byte)(int.Parse(hex[1].ToString(), System.Globalization.NumberStyles.HexNumber) * 0x11);
-                col.B = (byte)(int.Parse(hex[2].ToString(), System.Globalization.NumberStyles.HexNumber) * 0x11);
+                var r = Math.Pow((float)int.Parse(hex[0].ToString(), System.Globalization.NumberStyles.HexNumber) / 0x0f, gamma);
+                var g = Math.Pow((float)int.Parse(hex[1].ToString(), System.Globalization.NumberStyles.HexNumber) / 0x0f, gamma);
+                var b = Math.Pow((float)int.Parse(hex[2].ToString(), System.Globalization.NumberStyles.HexNumber) / 0x0f, gamma);
+
+                col.R = (byte)Math.Round(r * 0x7f);
+                col.G = (byte)Math.Round(g * 0x7f);
+                col.B = (byte)Math.Round(b * 0x7f);
                 col.A = 0xff;
             }
             else if (hex.Length == 2)
             {
-                var v = (byte)int.Parse(hex, System.Globalization.NumberStyles.HexNumber);
+                var v   = Math.Pow((float)int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber) / 0xff, gamma);
+                var val = (byte)Math.Round(v * 0x7f);
 
-                col.R = v;
-                col.G = v;
-                col.B = v;
+                col.R = val;
+                col.G = val;
+                col.B = val;
                 col.A = 0xff;
             }
             else if (hex.Length == 1)
             {
-                var v = (byte)(int.Parse(hex, System.Globalization.NumberStyles.HexNumber) * 0x11);
+                var v   = Math.Pow((float)int.Parse(hex, System.Globalization.NumberStyles.HexNumber) / 0x0f, gamma);
+                var val = (byte)Math.Round(v * 0x7f);
 
-                col.R = v;
-                col.G = v;
-                col.B = v;
+                col.R = val;
+                col.G = val;
+                col.B = val;
                 col.A = 0xff;
             }
 

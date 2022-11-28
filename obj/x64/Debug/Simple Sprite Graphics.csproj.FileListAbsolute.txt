@@ -232,7 +232,6 @@ C:\Users\shamsi\Documents\GitHub\Simple Sprite Graphics\bin\SixLabors.Core.dll
 C:\Users\shamsi\Documents\GitHub\Simple Sprite Graphics\bin\System.Numerics.Vectors.dll
 C:\Users\shamsi\Documents\GitHub\Simple Sprite Graphics\bin\SixLabors.ImageSharp.xml
 C:\Users\shamsi\Documents\GitHub\Simple Sprite Graphics\bin\SixLabors.Core.xml
-C:\Users\shamsi\Documents\GitHub\Simple Sprite Graphics\obj\x64\Debug\Simple Sprite Graphics.csproj.AssemblyReference.cache
 C:\Users\shamsi\Documents\GitHub\Simple Sprite Graphics\obj\x64\Debug\Simple Sprite Graphics.exe.config
 C:\Users\shamsi\Documents\GitHub\Simple Sprite Graphics\obj\x64\Debug\Simple Sprite Graphics.csproj.CoreCompileInputs.cache
 C:\Users\shamsi\Documents\GitHub\Simple Sprite Graphics\obj\x64\Debug\Simple Sprite Graphics.csproj.CopyComplete

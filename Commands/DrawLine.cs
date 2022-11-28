@@ -18,6 +18,7 @@ using VRage.Game.ModAPI.Ingame.Utilities;
 using VRage.Game.ObjectBuilders.Definitions;
 using VRageMath;
 
+
 namespace IngameScript
 {
     partial class Program
@@ -60,15 +61,15 @@ namespace IngameScript
 
         public bool ParseDrawLine(Parser parser)
         {
-            if (!parser.Match(DrawRectangle.Keyword))
+            if (!parser.Match(DrawLine.Keyword))
                 return false;
 
             var x1 = ParseXCoord(parser);
             var y1 = ParseYCoord(parser);
-            var x2 = ParseWCoord(parser);
-            var y2 = ParseHCoord(parser);
+            var x2 = ParseXCoord(parser);
+            var y2 = ParseYCoord(parser);
 
-            parser.AddCommand(new DrawRectangle(x1, y1, x2, y2));
+            parser.AddCommand(new DrawLine(x1, y1, x2, y2));
 
             return false;
         }

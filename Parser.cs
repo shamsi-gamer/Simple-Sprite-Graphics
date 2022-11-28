@@ -154,8 +154,8 @@ namespace IngameScript
             }
 
 
-            //foreach (var token in tokens)
-            //    logPanel.WriteText("token = " + token + "\n", true);
+            foreach (var token in tokens)
+                logPanel.WriteText("token = " + token + "\n", true);
 
             return tokens;
         }
@@ -191,6 +191,7 @@ namespace IngameScript
                     case DrawRectangle   .Keyword: ParseDrawRectangle(parser); break;
                     case FillEllipse     .Keyword: ParseFillEllipse  (parser); break;
                     case DrawLine        .Keyword: ParseDrawLine     (parser); break;
+                    case Gradient        .Keyword: ParseGradient     (parser); break;
 
 
                     default: overflowProtect--; break;
